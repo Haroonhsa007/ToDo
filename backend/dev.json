@@ -1,0 +1,16 @@
+{
+    "DEBUG": true,
+    "SECRET_KEY": "django-insecure-6eslm8u73q2g!@^tebpu7t3!lc*$h9n*70w&8=ne&s_$&1wmxj",
+    "ALLOWED_HOSTS": ["*"],
+    "DATABASES": {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": "dbraxis",
+            "USER": "userraxis",
+            "PASSWORD": "userraxis1234",
+            "HOST": "localhost",
+            "PORT": "3309",
+            "OPTIONS": {}
+        }
+    }
+}
