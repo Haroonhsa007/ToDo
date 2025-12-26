@@ -62,86 +62,43 @@ export function Dashboard() {
   ];
 
   return (
-    <div className="flex-1 bg-white min-h-screen overflow-y-auto">
-      {/* Header */}
-      <header className="bg-white border-b border-neutral-border px-8 py-6 sticky top-0 z-10">
-        <div className="flex items-center justify-between mb-6">
-          {/* Left - Dashboard Title */}
-          <div className="shrink-0 mr-6">
-            <h1 className="text-2xl font-bold text-primary">Dashboard</h1>
+    // <div className="flex-1 bg-white min-h-screen overflow-y-auto">
+    <div className="flex-1 bg-yellow-500 min-h-screen overflow-y-auto">
+
+
+      {/* Welcome Section */}
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-4">
+            <h1 className="text-4xl font-bold text-neutral-text">
+              Welcome back, Sundar
+            </h1>
+            <span className="text-4xl">👋</span>
           </div>
 
-          {/* Center - Search Bar */}
-          <div className="flex-1 max-w-2xl">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search your task here..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="w-full px-5 py-3 pr-12 rounded-lg bg-neutral-bg border border-neutral-border focus:outline-none focus:border-primary transition-colors text-neutral-text placeholder-neutral-text-muted"
-              />
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white p-2 rounded-lg hover:bg-primary-dark transition-colors">
-                <MdSearch size={20} />
-              </button>
+          {/* Team Members Row */}
+          <div className="flex items-center gap-4">
+            <div className="flex -space-x-2">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden shadow-sm bg-gray-200">
+                  <img
+                    src={`https://i.pravatar.cc/150?img=${i}`}
+                    alt={`Team member ${i}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
             </div>
-          </div>
-
-          {/* Right Section - Icons and Date */}
-          <div className="flex items-center gap-3 ml-6">
-            <button className="p-2.5 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors shadow-sm">
-              <MdSearch size={20} />
+            <div className="w-10 h-10 rounded-full border-2 border-white bg-neutral-bg flex items-center justify-center shadow-sm">
+              <span className="text-neutral-text-muted text-xs font-semibold">+4</span>
+            </div>
+            <button className="px-5 py-2.5 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md">
+              <MdAdd size={20} />
+              Invite
             </button>
-            <button
-              onClick={() => navigate('/notifications')}
-              className="p-2.5 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors shadow-sm"
-            >
-              <MdNotifications size={20} />
-            </button>
-            <button
-              onClick={() => navigate('/calendar')}
-              className="p-2.5 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors shadow-sm"
-            >
-              <MdCalendarToday size={20} />
-            </button>
-            <p className="text-neutral-text ml-2 text-sm font-medium">Tuesday 20/06/2023</p>
           </div>
         </div>
-
-        {/* Welcome Section */}
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-4">
-              <h1 className="text-4xl font-bold text-neutral-text">
-                Welcome back, Sundar
-              </h1>
-              <span className="text-4xl">👋</span>
-            </div>
-
-            {/* Team Members Row */}
-            <div className="flex items-center gap-4">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden shadow-sm bg-gray-200">
-                    <img
-                      src={`https://i.pravatar.cc/150?img=${i}`}
-                      alt={`Team member ${i}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-              <div className="w-10 h-10 rounded-full border-2 border-white bg-neutral-bg flex items-center justify-center shadow-sm">
-                <span className="text-neutral-text-muted text-xs font-semibold">+4</span>
-              </div>
-              <button className="px-5 py-2.5 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md">
-                <MdAdd size={20} />
-                Invite
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      </div>
 
       {/* Main Content */}
       <div className="p-8">

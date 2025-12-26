@@ -39,7 +39,7 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed left-0 top-0 h-screen bg-sidebar flex flex-col shadow-xl overflow-y-auto z-50
+          fixed left-0 top-25 h-screen bg-pink-400 flex flex-col shadow-xl overflow-y-auto z-50
           transition-all duration-300 ease-in-out
           ${isCollapsed 
             ? 'w-20 -translate-x-full lg:translate-x-0' 
@@ -49,14 +49,9 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
       >
         {/* Toggle Button */}
         <div className={`flex items-center ${isCollapsed ? 'justify-center px-2' : 'justify-between px-4'} pt-4 pb-2`}>
-          {!isCollapsed && (
-            <h1 className="text-2xl lg:text-3xl font-bold text-white truncate">
-              Dashboard
-            </h1>
-          )}
           <button
             onClick={onToggle}
-            className={`p-2 rounded-lg text-white hover:bg-white/10 transition-colors ${isCollapsed ? '' : 'ml-auto lg:ml-0'}`}
+            className={`p-2 rounded-lg text-black hover:bg-white/10 transition-colors ${isCollapsed ? '' : 'ml-auto lg:ml-0'}`}
             aria-label="Toggle sidebar"
           >
             {isCollapsed ? (
@@ -104,8 +99,8 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
                   w-full flex items-center gap-3 rounded-lg transition-all duration-200
                   ${isCollapsed ? 'justify-center px-3 py-3' : 'px-5 py-3'}
                   ${isNavActive || isActive
-                    ? 'bg-white text-neutral-text shadow-lg font-semibold'
-                    : 'text-white/90 hover:bg-white/10 hover:text-white'
+                    ? 'bg-white text-black shadow-lg font-semibold'
+                    : 'text-black hover:bg-white/10 hover:text-white'
                   }
                 `}
                 title={isCollapsed ? item.label : ''}

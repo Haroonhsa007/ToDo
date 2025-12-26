@@ -27,45 +27,37 @@ export function Layout({ children, onLogout }) {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      {/* Sidebar */}
-      <Sidebar
-        onLogout={onLogout}
-        isCollapsed={isSidebarCollapsed}
-        onToggle={toggleSidebar}
-      />
+    <div>
+      {/* Header/Navbar */}
+      <Header />
 
-      {/* Main Content Area */}
-      <div 
-        className={`
+      <div className="min-h-screen flex bg-gray-50">
+        {/* Sidebar */}
+        <Sidebar onLogout={onLogout} isCollapsed={isSidebarCollapsed} onToggle={toggleSidebar} />
+
+        {/* Main Content Area */}
+        <div
+          className={`
           flex-1 flex flex-col min-h-screen w-full
           transition-all duration-300 ease-in-out
-          ${isSidebarCollapsed 
-            ? 'ml-0 lg:ml-20' 
-            : 'ml-0 lg:ml-72'
-          }
+          ${isSidebarCollapsed ? 'ml-0 lg:ml-20' : 'ml-0 lg:ml-72'}
         `}
-      >
-        {/* Header/Navbar */}
-        <Header 
-          onSidebarToggle={toggleSidebar}
-          isSidebarCollapsed={isSidebarCollapsed}
-        />
-
-        {/* Main Content */}
-        <main 
-          className={`
+        >
+          {/* Main Content */}
+          <main
+            className={`
             flex-1 overflow-y-auto
             transition-all duration-300 ease-in-out
-            pt-16
+            pt-16 
             px-4 sm:px-6 lg:px-8 py-6 lg:py-8
           `}
-        >
-          {children}
-        </main>
+          >
+            {children}
+          </main>
 
-        {/* Footer */}
-        <Footer />
+          {/* Footer */}
+          <Footer />
+        </div>
       </div>
     </div>
   );
