@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
-import { Footer } from './Footer';
 
 export function Layout({ children, onLogout }) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
