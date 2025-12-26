@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { MdPerson, MdLock } from 'react-icons/md';
 import { FaFacebookF, FaGoogle } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 
-export function Login({ onLogin, onShowRegister }) {
+export function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -127,12 +128,12 @@ export function Login({ onLogin, onShowRegister }) {
           {/* Create Account Link */}
           <p className="text-neutral-text-light mt-6">
             Don't have an account?{' '}
-            <button
-              onClick={() => onShowRegister?.()}
+            <Link
+              to="/register"
               className="text-[#008BD9] hover:underline font-medium"
             >
               Create One
-            </button>
+            </Link>
           </p>
         </div>
 

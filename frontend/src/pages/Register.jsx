@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { FaFacebookF, FaGoogle } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 
-export function Register({ onRegister, onBack }) {
+export function Register({ onRegister }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -232,12 +233,12 @@ export function Register({ onRegister, onBack }) {
           {/* Login Link */}
           <p className="text-neutral-text-light mt-6">
             Already have an account?{' '}
-            <button
-              onClick={() => onBack?.()}
+            <Link
+              to="/login"
               className="text-[#008BD9] hover:underline font-medium"
             >
               Sign In
-            </button>
+            </Link>
           </p>
         </div>
 

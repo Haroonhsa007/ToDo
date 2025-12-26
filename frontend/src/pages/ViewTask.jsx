@@ -1,7 +1,12 @@
 import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MdArrowBack, MdEdit, MdDelete, MdCalendarToday, MdFlag, MdImage } from 'react-icons/md';
 
-export function ViewTask({ task, onBack, onEdit, onDelete }) {
+export function ViewTask() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const task = location.state?.task;
+  
   const taskData = task || {
     title: "Attend Nischal's Birthday Party",
     description: "Buy gifts on the way and pick up cake from the bakery. (6 PM | Fresh Elements)",
@@ -32,7 +37,7 @@ export function ViewTask({ task, onBack, onEdit, onDelete }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
-              onClick={onBack}
+              onClick={() => navigate(-1)}
               className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
             >
               <MdArrowBack size={24} className="text-neutral-text" />
@@ -41,14 +46,14 @@ export function ViewTask({ task, onBack, onEdit, onDelete }) {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={onEdit}
+              onClick={() => navigate('/edit-task', { state: { task } })}
               className="px-4 py-2 border-2 border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all duration-200 flex items-center gap-2"
             >
               <MdEdit size={18} />
               Edit
             </button>
             <button
-              onClick={onDelete}
+              onClick={() => { /* Handle delete */ navigate(-1); }}
               className="px-4 py-2 border-2 border-status-not-started text-status-not-started rounded-lg font-medium hover:bg-status-not-started hover:text-white transition-all duration-200 flex items-center gap-2"
             >
               <MdDelete size={18} />

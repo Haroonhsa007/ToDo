@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MdSearch, MdNotifications, MdCalendarToday, MdAdd } from 'react-icons/md';
 import { TaskCard, CompletedTaskCard } from '../components/features/TaskCard';
 import { TaskStatusChart } from '../components/features/TaskStatusChart';
 
-export function Dashboard({ onNavigate }) {
+export function Dashboard() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
 
   const todayDate = new Date().toLocaleDateString('en-US', {
@@ -91,13 +93,13 @@ export function Dashboard({ onNavigate }) {
               <MdSearch size={20} />
             </button>
             <button
-              onClick={() => onNavigate?.('Notifications')}
+              onClick={() => navigate('/notifications')}
               className="p-2.5 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors shadow-sm"
             >
               <MdNotifications size={20} />
             </button>
             <button
-              onClick={() => onNavigate?.('Calendar')}
+              onClick={() => navigate('/calendar')}
               className="p-2.5 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors shadow-sm"
             >
               <MdCalendarToday size={20} />

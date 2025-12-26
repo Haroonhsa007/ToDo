@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MdArrowBack, MdColorLens } from 'react-icons/md';
 
-export function CreateCategories({ onBack }) {
+export function CreateCategories() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     color: '#FF8787',
@@ -23,7 +25,7 @@ export function CreateCategories({ onBack }) {
   const handleSubmit = e => {
     e.preventDefault();
     // Handle category creation
-    onBack?.();
+    navigate(-1);
   };
 
   return (
@@ -32,7 +34,7 @@ export function CreateCategories({ onBack }) {
       <header className="bg-white border-b border-neutral-border px-8 py-6">
         <div className="flex items-center gap-4">
           <button
-            onClick={onBack}
+            onClick={() => navigate(-1)}
             className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
           >
             <MdArrowBack size={24} className="text-neutral-text" />
@@ -146,7 +148,7 @@ export function CreateCategories({ onBack }) {
             </button>
             <button
               type="button"
-              onClick={onBack}
+              onClick={() => navigate(-1)}
               className="px-6 py-3 border-2 border-neutral-border text-neutral-text rounded-lg font-medium hover:bg-neutral-bg transition-colors"
             >
               Cancel

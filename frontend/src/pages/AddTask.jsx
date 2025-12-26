@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MdArrowBack, MdCalendarToday, MdFlag, MdImage } from 'react-icons/md';
 
-export function AddTask({ onBack }) {
+export function AddTask() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -21,7 +23,7 @@ export function AddTask({ onBack }) {
   const handleSubmit = e => {
     e.preventDefault();
     // Handle task creation
-    onBack?.();
+    navigate(-1);
   };
 
   return (
@@ -30,7 +32,7 @@ export function AddTask({ onBack }) {
       <header className="bg-white border-b border-neutral-border px-8 py-6">
         <div className="flex items-center gap-4">
           <button
-            onClick={onBack}
+            onClick={() => navigate(-1)}
             className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
           >
             <MdArrowBack size={24} className="text-neutral-text" />
@@ -162,7 +164,7 @@ export function AddTask({ onBack }) {
             </button>
             <button
               type="button"
-              onClick={onBack}
+              onClick={() => navigate(-1)}
               className="px-6 py-3 border-2 border-neutral-border text-neutral-text rounded-lg font-medium hover:bg-neutral-bg transition-colors"
             >
               Cancel

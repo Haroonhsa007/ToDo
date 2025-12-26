@@ -1,3 +1,4 @@
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   MdDashboard,
   MdCheckCircle,
@@ -7,7 +8,9 @@ import {
   MdHelp,
   MdLogout,
   MdNotifications,
-  MdCalendarToday
+  MdCalendarToday,
+  MdMenu,
+  MdChevronLeft
 } from 'react-icons/md';
 
 const menuItems = [
@@ -21,63 +24,118 @@ const menuItems = [
   { icon: MdHelp, label: 'Help', path: '/help' },
 ];
 
-export function Sidebar({ activeItem = 'Dashboard', onNavigate, onLogout }) {
+export function Sidebar({ onLogout, isCollapsed, onToggle }) {
+  const location = useLocation();
   return (
-    <div className="w-72 bg-sidebar h-screen flex flex-col shadow-xl overflow-y-auto">
-      {/* Logo/Brand */}
-      <div className="px-6 pt-8 pb-6">
-        <h1 className="text-3xl font-bold text-white">
-          Dashboard
-        </h1>
-      </div>
-
-      {/* User Profile Section */}
-      <div className="px-6 pb-6">
-        <div className="flex flex-col items-center">
-          <div className="w-20 h-20 rounded-full overflow-hidden mb-3 ring-2 ring-white/20 bg-white/20 flex items-center justify-center">
-            <span className="text-white text-2xl font-bold">SG</span>
-          </div>
-          <h3 className="text-white font-semibold text-base">Sundar Gurung</h3>
-          <p className="text-white/70 text-xs mt-1">sundargurung360@gmail.com</p>
+    <>
+      {/* Mobile Overlay */}
+      {!isCollapsed && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity"
+          onClick={onToggle}
+        />
+      )}
+      
+      {/* Sidebar */}
+      <aside
+        className={`
+          fixed left-0 top-0 h-screen bg-sidebar flex flex-col shadow-xl overflow-y-auto z-50
+          transition-all duration-300 ease-in-out
+          ${isCollapsed 
+            ? 'w-20 -translate-x-full lg:translate-x-0' 
+            : 'w-72 translate-x-0'
+          }
+        `}
+      >
+        {/* Toggle Button */}
+        <div className={`flex items-center ${isCollapsed ? 'justify-center px-2' : 'justify-between px-4'} pt-4 pb-2`}>
+          {!isCollapsed && (
+            <h1 className="text-2xl lg:text-3xl font-bold text-white truncate">
+              Dashboard
+            </h1>
+          )}
+          <button
+            onClick={onToggle}
+            className={`p-2 rounded-lg text-white hover:bg-white/10 transition-colors ${isCollapsed ? '' : 'ml-auto lg:ml-0'}`}
+            aria-label="Toggle sidebar"
+          >
+            {isCollapsed ? (
+              <MdMenu className="text-2xl" />
+            ) : (
+              <MdChevronLeft className="text-2xl" />
+            )}
+          </button>
         </div>
-      </div>
 
-      {/* Navigation Menu */}
-      <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto">
-        {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = item.label === activeItem;
+        {/* User Profile Section */}
+        {!isCollapsed && (
+          <div className="px-6 pb-6">
+            <div className="flex flex-col items-center">
+              <div className="w-20 h-20 rounded-full overflow-hidden mb-3 ring-2 ring-white/20 bg-white/20 flex items-center justify-center">
+                <span className="text-white text-2xl font-bold">SG</span>
+              </div>
+              <h3 className="text-white font-semibold text-base text-center">Sundar Gurung</h3>
+              <p className="text-white/70 text-xs mt-1 text-center">sundargurung360@gmail.com</p>
+            </div>
+          </div>
+        )}
 
-          return (
-            <button
-              key={item.label}
-              onClick={() => onNavigate?.(item.label)}
-              className={`
-                w-full flex items-center gap-3 px-5 py-3 rounded-lg
-                transition-all duration-200
-                ${isActive
-                  ? 'bg-white text-neutral-text shadow-lg font-semibold'
-                  : 'text-white/90 hover:bg-white/10 hover:text-white'
-                }
-              `}
-            >
-              <Icon className={`text-xl ${isActive ? 'text-primary' : 'text-white'}`} />
-              <span className="font-medium text-sm">{item.label}</span>
-            </button>
-          );
-        })}
-      </nav>
+        {isCollapsed && (
+          <div className="px-4 pb-6 pt-4">
+            <div className="flex justify-center">
+              <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-white/20 bg-white/20 flex items-center justify-center">
+                <span className="text-white text-lg font-bold">SG</span>
+              </div>
+            </div>
+          </div>
+        )}
 
-      {/* Logout Button */}
-      <div className="p-4 border-t border-white/10 mt-auto">
-        <button
-          onClick={() => onLogout?.()}
-          className="w-full flex items-center gap-3 px-5 py-3 rounded-lg text-white/90 hover:bg-white/10 hover:text-white transition-all duration-200"
-        >
-          <MdLogout className="text-xl" />
-          <span className="font-medium text-sm">Logout</span>
-        </button>
-      </div>
-    </div>
+        {/* Navigation Menu */}
+        <nav className={`flex-1 ${isCollapsed ? 'px-2' : 'px-4'} space-y-1.5 overflow-y-auto`}>
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.path;
+
+            return (
+              <NavLink
+                key={item.label}
+                to={item.path}
+                className={({ isActive: isNavActive }) => `
+                  w-full flex items-center gap-3 rounded-lg transition-all duration-200
+                  ${isCollapsed ? 'justify-center px-3 py-3' : 'px-5 py-3'}
+                  ${isNavActive || isActive
+                    ? 'bg-white text-neutral-text shadow-lg font-semibold'
+                    : 'text-white/90 hover:bg-white/10 hover:text-white'
+                  }
+                `}
+                title={isCollapsed ? item.label : ''}
+              >
+                <Icon className={`text-xl flex-shrink-0 ${isActive ? 'text-primary' : 'text-white'}`} />
+                {!isCollapsed && (
+                  <span className="font-medium text-sm truncate">{item.label}</span>
+                )}
+              </NavLink>
+            );
+          })}
+        </nav>
+
+        {/* Logout Button */}
+        <div className={`${isCollapsed ? 'p-2' : 'p-4'} border-t border-white/10 mt-auto`}>
+          <button
+            onClick={() => onLogout?.()}
+            className={`
+              w-full flex items-center gap-3 rounded-lg text-white/90 hover:bg-white/10 hover:text-white transition-all duration-200
+              ${isCollapsed ? 'justify-center px-3 py-3' : 'px-5 py-3'}
+            `}
+            title={isCollapsed ? 'Logout' : ''}
+          >
+            <MdLogout className="text-xl flex-shrink-0" />
+            {!isCollapsed && (
+              <span className="font-medium text-sm">Logout</span>
+            )}
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }
