@@ -31,7 +31,7 @@ export function Layout({ children, onLogout }) {
       {/* Header/Navbar */}
       <Header />
 
-      <div className="min-h-screen flex bg-gray-50">
+      <div className="min-h-screen flex bg-[#F8F8F8]">
         {/* Sidebar */}
         <Sidebar onLogout={onLogout} isCollapsed={isSidebarCollapsed} onToggle={toggleSidebar} />
 
@@ -54,9 +54,6 @@ export function Layout({ children, onLogout }) {
           >
             {children}
           </main>
-
-          {/* Footer */}
-          <Footer />
         </div>
       </div>
     </div>

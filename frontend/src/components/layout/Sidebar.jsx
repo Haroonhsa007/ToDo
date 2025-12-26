@@ -39,7 +39,7 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed left-0 top-25 h-screen bg-pink-400 flex flex-col shadow-xl overflow-y-auto z-50
+          fixed left-0 top-25 h-screen bg-[#FF6767] flex flex-col shadow-xl overflow-y-auto z-50
           transition-all duration-300 ease-in-out
           ${isCollapsed 
             ? 'w-20 -translate-x-full lg:translate-x-0' 
