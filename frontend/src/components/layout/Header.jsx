@@ -1,15 +1,19 @@
 import { useState, useEffect, useMemo } from 'react';
-import { MdMenu, MdSearch, MdAdd } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { MdMenu, MdSearch } from 'react-icons/md';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export function Header({ onSidebarToggle }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
+  // Check if we're on the dashboard
+  const isDashboard = location.pathname === '/dashboard' || location.pathname === '/';
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentDateTime(new Date());
-    }, 1000); // Update every second
+    }, 1000);
 
     return () => clearInterval(timer);
   }, []);
@@ -22,109 +26,93 @@ export function Header({ onSidebarToggle }) {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     
-    // 12-hour format
-    let hours = date.getHours();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    
     return {
       day: dayName,
       date: `${day}/${month}/${year}`,
-      time: `${hours}:${minutes}:${seconds} ${ampm}`
     };
   }, [currentDateTime]);
 
   return (
-    <header className="bg-[#F8F8F8] px-4 sm:px-6 lg:px-8 py-3 lg:py-4 sticky top-0 z-30 border-b border-gray-200/50">
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 lg:gap-0">
-        {/* Top Row - Mobile: Title and Menu */}
-        <div className="w-full lg:w-auto flex items-center justify-between lg:justify-start">
-          {/* Left - App Title */}
-          <div className="shrink-0 flex items-center gap-2 lg:mr-6">
-            <button
-              onClick={onSidebarToggle}
-              className="p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors lg:hidden"
-              aria-label="Toggle sidebar"
-            >
-              <MdMenu className="text-2xl" />
-            </button>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">
-              <span className="text-[#ff6161]">
-                Dash
-              </span>
-              <span className="text-black ml-1">
-                board
-              </span>
+    <header className="bg-white px-4 sm:px-6 lg:px-8 py-3 lg:py-5 sticky top-0 z-30 border-b border-[#E5E5E5]">
+      <div className="flex items-center justify-between gap-4">
+        {/* Left - Logo/Title */}
+        <div className="shrink-0 flex items-center gap-2">
+          <button
+            onClick={onSidebarToggle}
+            className="p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors lg:hidden"
+            aria-label="Toggle sidebar"
+          >
+            <MdMenu className="text-2xl" />
+          </button>
+          
+          {isDashboard ? (
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+              <span className="text-[#FF6767]">Dash</span>
+              <span className="text-[#000000]">board</span>
             </h1>
-          </div>
-
-          {/* Right Section - Icons and Date (Mobile) */}
-          <div className="flex items-center gap-2 lg:hidden">
-            <button
-              onClick={() => navigate('/notifications')}
-              className="transition-opacity hover:opacity-80 p-1"
-            >
-              <img 
-                src="/site_svgs/nav-bar/Notifications.svg" 
-                alt="Notifications" 
-                className="w-6 h-6"
-              />
-            </button>
-            <button
-              onClick={() => navigate('/calendar')}
-              className="transition-opacity hover:opacity-80 p-1"
-            >
-              <img 
-                src="/site_svgs/nav-bar/Cal.svg" 
-                alt="Calendar" 
-                className="w-6 h-6"
-              />
-            </button>
-          </div>
+          ) : (
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+              <span className="text-[#FF6767]">To</span>
+              <span className="text-[#000000]">-Do</span>
+            </h1>
+          )}
         </div>
 
         {/* Center - Search Bar */}
-        <div className="w-full lg:flex-1 lg:max-w-2xl order-3 lg:order-2">
-          <div className="relative shadow-md rounded-xl bg-[#e7e1e1] transition-all">
+        <div className="flex-1 max-w-xl mx-4 hidden sm:block">
+          <div className="relative">
             <input
               type="text"
-              placeholder="Search your task here"
-              className="w-full text-center px-4 sm:px-5 py-2 sm:py-2.5 pr-10 sm:pr-12 rounded-xl bg-[#e7e1e1] outline-none border-none text-sm sm:text-base text-neutral-text placeholder-neutral-text-muted transition-all duration-200 ease-in-out hover:bg-[#f8fafe] hover:shadow-lg focus:bg-white focus:shadow-lg"
-              style={{ boxShadow: '0 6px 14px 0 rgba(78, 88, 186, 0.09)' }}
+              placeholder="Search your task here..."
+              className="w-full px-4 py-2.5 pr-12 rounded-xl bg-[#F5F5F5] border border-[#E5E5E5] outline-none text-sm text-[#000000] placeholder-[#A1A3AB] focus:border-[#A1A3AB] transition-colors"
             />
+            <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#3ABEFF] rounded-lg flex items-center justify-center hover:bg-[#2EA8E6] transition-colors">
+              <MdSearch className="text-white text-xl" />
+            </button>
           </div>
         </div>
 
-        {/* Right Section - Icons and Date (Desktop) */}
-        <div className="hidden lg:flex items-center gap-3 ml-6 order-3">
+        {/* Right - Icons and Date */}
+        <div className="flex items-center gap-2 sm:gap-4">
+          {/* Notifications */}
           <button
             onClick={() => navigate('/notifications')}
-            className="transition-opacity hover:opacity-80"
+            className="w-9 h-9 sm:w-10 sm:h-10 bg-[#3ABEFF] rounded-lg flex items-center justify-center hover:bg-[#2EA8E6] transition-colors"
           >
-            <img 
-              src="/site_svgs/nav-bar/Notifications.svg" 
-              alt="Notifications" 
-              className="w-[34px] h-[34px]"
-            />
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
           </button>
+          
+          {/* Calendar */}
           <button
             onClick={() => navigate('/calendar')}
-            className="transition-opacity hover:opacity-80"
+            className="w-9 h-9 sm:w-10 sm:h-10 bg-[#3ABEFF] rounded-lg flex items-center justify-center hover:bg-[#2EA8E6] transition-colors"
           >
-            <img 
-              src="/site_svgs/nav-bar/Cal.svg" 
-              alt="Calendar" 
-              className="w-[34px] h-[34px]"
-            />
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
           </button>
-          <div className="ml-2 flex flex-col text-center items-center">
-            <p className="text-black text-xs lg:text-sm font-medium">{dateTime.day}</p>
-            <p className="text-[#3ABEFF] text-xs lg:text-sm font-medium">{dateTime.date}</p>
-            <p className="text-red-600 text-xs lg:text-sm font-medium">{dateTime.time}</p>
+
+          {/* Date Display - Desktop only */}
+          <div className="hidden lg:flex flex-col items-end ml-2">
+            <span className="text-[#000000] text-sm font-medium">{dateTime.day}</span>
+            <span className="text-[#3ABEFF] text-sm font-medium">{dateTime.date}</span>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile Search Bar */}
+      <div className="mt-3 sm:hidden">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search your task here..."
+            className="w-full px-4 py-2.5 pr-12 rounded-xl bg-[#F5F5F5] border border-[#E5E5E5] outline-none text-sm text-[#000000] placeholder-[#A1A3AB] focus:border-[#A1A3AB] transition-colors"
+          />
+          <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#3ABEFF] rounded-lg flex items-center justify-center hover:bg-[#2EA8E6] transition-colors">
+            <MdSearch className="text-white text-xl" />
+          </button>
         </div>
       </div>
     </header>

@@ -1,128 +1,156 @@
 import { useState } from 'react';
-import { MdPerson, MdEmail, MdPhone, MdEdit } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 export function AccountInfo() {
-  const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    name: 'Sundar Gurung',
-    email: 'sundargurung360@gmail.com',
-    phone: '+977 9841234567',
-    bio: 'Software Developer passionate about building great products.',
+    firstName: '',
+    lastName: '',
+    email: '',
+    contactNumber: '',
+    position: '',
   });
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    // Handle save logic
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle update
   };
 
   return (
-    <div className="w-full">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
-        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Account Information</h1>
-        <button
-          onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-          className="px-4 sm:px-5 py-2 bg-primary text-white rounded-lg text-sm sm:text-base font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md w-full sm:w-auto justify-center"
-        >
-          <MdEdit size={18} className="sm:w-5 sm:h-5" />
-          <span>{isEditing ? 'Save Changes' : 'Edit Profile'}</span>
-        </button>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-4xl mx-auto">
-        {/* Profile Picture */}
-        <div className="mb-6 sm:mb-8">
-          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden mx-auto mb-4 ring-4 ring-primary/20">
-            <img
-              src="https://ui-avatars.com/api/?name=Sundar+Gurung&background=FF6767&color=fff&size=200"
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          {isEditing && (
-            <div className="text-center">
-              <button className="text-primary hover:underline text-sm font-medium">
-                Change Photo
-              </button>
-            </div>
-          )}
+    <div className="w-full h-full flex flex-col">
+      {/* Main Container */}
+      <div className="bg-white rounded-xl lg:rounded-2xl border border-[#D3D3D3] p-4 sm:p-6 lg:p-8 flex-1 flex flex-col min-h-0 relative">
+        {/* Header Row */}
+        <div className="flex items-start justify-between mb-6">
+          <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#000000] border-b-2 border-[#FF6767] pb-1">
+            Account Information
+          </h1>
+          <button
+            onClick={() => navigate(-1)}
+            className="text-[#000000] hover:text-[#747474] transition-colors text-sm font-medium underline"
+          >
+            Go Back
+          </button>
         </div>
 
-        {/* Form */}
-        <div className="space-y-4 sm:space-y-6">
-          {/* Name */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-text mb-2">
-              <MdPerson className="inline mr-2" />
-              Full Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              disabled={!isEditing}
-              className="w-full px-4 py-3 rounded-lg bg-neutral-bg border border-neutral-border focus:outline-none focus:border-primary transition-colors text-neutral-text disabled:opacity-60"
-            />
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto min-h-0">
+          {/* User Profile Section */}
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-[#D9D9D9] shrink-0">
+              <img 
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200" 
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold text-[#000000]">Sundar Gurung</h2>
+              <p className="text-sm text-[#747474]">sundargurung360@gmail.com</p>
+            </div>
           </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-text mb-2">
-              <MdEmail className="inline mr-2" />
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              disabled={!isEditing}
-              className="w-full px-4 py-3 rounded-lg bg-neutral-bg border border-neutral-border focus:outline-none focus:border-primary transition-colors text-neutral-text disabled:opacity-60"
-            />
-          </div>
+          {/* Form Container */}
+          <form onSubmit={handleSubmit}>
+            <div className="border border-[#D3D3D3] rounded-xl p-4 sm:p-6 max-w-2xl">
+              {/* First Name */}
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-[#000000] mb-2">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  className="w-full max-w-md h-11 px-4 rounded-lg bg-white border border-[#D3D3D3] focus:outline-none focus:border-[#A1A3AB] transition-colors text-[#000000] text-sm"
+                />
+              </div>
 
-          {/* Phone */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-text mb-2">
-              <MdPhone className="inline mr-2" />
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              disabled={!isEditing}
-              className="w-full px-4 py-3 rounded-lg bg-neutral-bg border border-neutral-border focus:outline-none focus:border-primary transition-colors text-neutral-text disabled:opacity-60"
-            />
-          </div>
+              {/* Last Name */}
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-[#000000] mb-2">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  className="w-full max-w-md h-11 px-4 rounded-lg bg-white border border-[#D3D3D3] focus:outline-none focus:border-[#A1A3AB] transition-colors text-[#000000] text-sm"
+                />
+              </div>
 
-          {/* Bio */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-text mb-2">
-              Bio
-            </label>
-            <textarea
-              name="bio"
-              value={formData.bio}
-              onChange={handleChange}
-              disabled={!isEditing}
-              rows={4}
-              className="w-full px-4 py-3 rounded-lg bg-neutral-bg border border-neutral-border focus:outline-none focus:border-primary transition-colors text-neutral-text resize-none disabled:opacity-60"
-            />
-          </div>
+              {/* Email Address */}
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-[#000000] mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full max-w-md h-11 px-4 rounded-lg bg-white border border-[#D3D3D3] focus:outline-none focus:border-[#A1A3AB] transition-colors text-[#000000] text-sm"
+                />
+              </div>
+
+              {/* Contact Number */}
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-[#000000] mb-2">
+                  Contact Number
+                </label>
+                <input
+                  type="tel"
+                  name="contactNumber"
+                  value={formData.contactNumber}
+                  onChange={handleChange}
+                  className="w-full max-w-md h-11 px-4 rounded-lg bg-white border border-[#D3D3D3] focus:outline-none focus:border-[#A1A3AB] transition-colors text-[#000000] text-sm"
+                />
+              </div>
+
+              {/* Position */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-[#000000] mb-2">
+                  Position
+                </label>
+                <input
+                  type="text"
+                  name="position"
+                  value={formData.position}
+                  onChange={handleChange}
+                  className="w-full max-w-md h-11 px-4 rounded-lg bg-white border border-[#D3D3D3] focus:outline-none focus:border-[#A1A3AB] transition-colors text-[#000000] text-sm"
+                />
+              </div>
+
+              {/* Buttons */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  Update Info
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/change-password')}
+                  className="px-6 py-2.5 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  Change Password
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   );
 }
-

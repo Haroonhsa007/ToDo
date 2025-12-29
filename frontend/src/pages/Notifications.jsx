@@ -1,131 +1,112 @@
 import { useState } from 'react';
-import { MdNotifications, MdCheckCircle, MdDelete } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
+import { MdKeyboardBackspace } from 'react-icons/md';
 
 export function Notifications() {
-  const [notifications, setNotifications] = useState([
+  const navigate = useNavigate();
+
+  const [notifications] = useState([
     {
       id: 1,
-      title: 'New task assigned',
-      message: 'You have been assigned a new task: "Landing Page Design"',
-      time: '2 hours ago',
-      read: false,
-      type: 'task',
+      title: 'Complete the UI design of Landing Page for FoodVentures.',
+      time: '2h',
+      priority: 'High',
+      image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=100',
     },
     {
       id: 2,
-      title: 'Task completed',
-      message: 'Task "Walk the dog" has been marked as completed',
-      time: '5 hours ago',
-      read: false,
-      type: 'success',
+      title: 'Complete the UI design of Landing Page for Travel Days.',
+      time: '2h',
+      priority: 'High',
+      image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=100',
     },
     {
       id: 3,
-      title: 'Reminder',
-      message: 'Task "Attend Birthday Party" is due in 2 hours',
-      time: '1 day ago',
-      read: true,
-      type: 'reminder',
+      title: 'Complete the Mobile app design for Pet Warden.',
+      time: '2h',
+      priority: 'Extremely High',
+      image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=100',
     },
     {
       id: 4,
-      title: 'Team update',
-      message: 'New team member joined your project',
-      time: '2 days ago',
-      read: true,
-      type: 'team',
+      title: 'Complete the entire design for Juice Slider.',
+      time: '2h',
+      priority: 'High',
+      image: 'https://images.unsplash.com/photo-1622597467836-f3285f2131b8?w=100',
     },
   ]);
 
-  const markAsRead = id => {
-    setNotifications(notifications.map(n => n.id === id ? { ...n, read: true } : n));
+  // Exact colors from design
+  const priorityColors = {
+    'High': '#F21E1E',
+    'Extremely High': '#F21E1E',
+    'Medium': '#0225FF',
+    'Low': '#05A301',
   };
-
-  const deleteNotification = id => {
-    setNotifications(notifications.filter(n => n.id !== id));
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, read: true })));
-  };
-
-  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="w-full">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <MdNotifications className="text-primary" size={24} className="sm:w-8 sm:h-8" />
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Notifications</h1>
-            {unreadCount > 0 && (
-              <p className="text-xs sm:text-sm text-neutral-text-muted">{unreadCount} unread notifications</p>
-            )}
-          </div>
-        </div>
-        {unreadCount > 0 && (
+    <div className="w-full h-full flex flex-col">
+      {/* Main Container */}
+      <div className="bg-white rounded-xl lg:rounded-2xl border border-[#D9D9D9] shadow-sm p-4 sm:p-6 flex-1 flex flex-col min-h-0 max-w-lg mx-auto w-full">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <h1 className="text-base sm:text-xl font-bold text-[#000000]">Notifications</h1>
           <button
-            onClick={markAllAsRead}
-            className="px-3 sm:px-4 py-2 bg-primary text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-primary-dark transition-colors w-full sm:w-auto"
+            onClick={() => navigate(-1)}
+            className="text-[#FF6767] hover:text-[#F24E1E] transition-colors"
           >
-            Mark all as read
+            <MdKeyboardBackspace size={20} className="sm:w-6 sm:h-6" />
           </button>
-        )}
-      </div>
+        </div>
 
-      {/* Main Content */}
-      <div>
-        {notifications.length === 0 ? (
-          <div className="text-center py-12">
-            <MdNotifications className="mx-auto text-neutral-text-muted mb-4" size={64} />
-            <p className="text-neutral-text-muted text-lg">No notifications</p>
-          </div>
-        ) : (
-          <div className="space-y-3 sm:space-y-4 max-w-4xl">
-            {notifications.map(notification => (
-              <div
-                key={notification.id}
-                className={`bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-soft border border-neutral-border/20 hover:shadow-medium transition-shadow ${
-                  !notification.read ? 'border-l-4 border-l-primary' : ''
-                }`}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-semibold text-lg text-neutral-text">{notification.title}</h3>
-                      {!notification.read && (
-                        <span className="w-2 h-2 bg-primary rounded-full"></span>
-                      )}
-                    </div>
-                    <p className="text-neutral-text-light mb-2">{notification.message}</p>
-                    <p className="text-xs text-neutral-text-muted">{notification.time}</p>
-                  </div>
-                  <div className="flex items-center gap-2 ml-4">
-                    {!notification.read && (
-                      <button
-                        onClick={() => markAsRead(notification.id)}
-                        className="p-2 text-neutral-text-muted hover:text-status-completed transition-colors"
-                        title="Mark as read"
-                      >
-                        <MdCheckCircle size={20} />
-                      </button>
-                    )}
-                    <button
-                      onClick={() => deleteNotification(notification.id)}
-                      className="p-2 text-neutral-text-muted hover:text-status-not-started transition-colors"
-                      title="Delete"
-                    >
-                      <MdDelete size={20} />
-                    </button>
-                  </div>
-                </div>
+        {/* Today Section */}
+        <div className="mb-3 sm:mb-4">
+          <p className="text-xs sm:text-sm text-[#A1A3AB] border-b border-[#D9D9D9] pb-2">Today</p>
+        </div>
+
+        {/* Notification List - Scrollable */}
+        <div className="space-y-3 sm:space-y-4 overflow-y-auto flex-1 min-h-0">
+          {notifications.map((notification) => (
+            <div
+              key={notification.id}
+              className="flex gap-2 sm:gap-3 pb-3 sm:pb-4 border-b border-[#D9D9D9] last:border-b-0"
+            >
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <p className="text-xs sm:text-sm text-[#000000] leading-relaxed mb-1">
+                  {notification.title.split(' ').map((word, idx) => {
+                    // Bold certain words
+                    if (['UI', 'design', 'Mobile', 'app', 'entire'].includes(word)) {
+                      return <strong key={idx}>{word} </strong>;
+                    }
+                    // Highlight project names
+                    if (['FoodVentures.', 'Travel', 'Days.', 'Pet', 'Warden.', 'Juice', 'Slider.'].includes(word)) {
+                      return <strong key={idx}>{word} </strong>;
+                    }
+                    return word + ' ';
+                  })}
+                  <span className="text-[#A1A3AB] text-[10px] sm:text-xs">{notification.time}</span>
+                </p>
+                <p className="text-[10px] sm:text-xs">
+                  <span className="text-[#A1A3AB]">Priority: </span>
+                  <span style={{ color: priorityColors[notification.priority] }}>
+                    {notification.priority}
+                  </span>
+                </p>
               </div>
-            ))}
-          </div>
-        )}
+
+              {/* Image */}
+              <div className="w-12 h-10 sm:w-16 sm:h-12 rounded overflow-hidden shrink-0">
+                <img
+                  src={notification.image}
+                  alt=""
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
-

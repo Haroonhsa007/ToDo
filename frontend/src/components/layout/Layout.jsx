@@ -39,30 +39,24 @@ export function Layout({ children, onLogout }) {
 	}, [isSidebarCollapsed, isMobile]);
 
 	return (
-		<div className="min-h-screen bg-[#F8F8F8]">
+		<div className="h-screen flex flex-col bg-[#F5F8FF] overflow-hidden">
 			{/* Header/Navbar */}
 			<Header onSidebarToggle={toggleSidebar} />
 
-			<div className="flex relative min-h-[calc(100vh-64px)] lg:min-h-[calc(100vh-80px)]">
+			<div className="flex flex-1 relative min-h-0">
 				{/* Sidebar */}
 				<Sidebar onLogout={onLogout} isCollapsed={isSidebarCollapsed} onToggle={toggleSidebar} />
 
 				{/* Main Content Area */}
 				<div
 					className={`
-						flex-1 flex flex-col w-full
+						flex-1 flex flex-col w-full min-h-0
 						transition-all duration-300 ease-in-out
 						${isMobile ? 'ml-0' : isSidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}
 					`}
 				>
 					{/* Main Content */}
-					<main
-						className={`
-							flex-1 overflow-y-auto
-							transition-all duration-300 ease-in-out
-							px-4 sm:px-6 lg:px-8 py-6 lg:py-8
-						`}
-					>
+					<main className="flex-1 flex flex-col min-h-0 px-4 sm:px-6 lg:px-8 py-4 lg:py-6 overflow-y-auto">
 						{children}
 					</main>
 				</div>

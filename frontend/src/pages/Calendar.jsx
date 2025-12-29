@@ -1,16 +1,20 @@
 import { useState } from 'react';
-import { MdChevronLeft, MdChevronRight, MdAdd, MdEvent } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
+import { MdChevronLeft, MdChevronRight, MdClose, MdKeyboardBackspace } from 'react-icons/md';
 
 export function Calendar() {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const navigate = useNavigate();
+  const [currentDate, setCurrentDate] = useState(new Date(2023, 5, 6)); // June 6, 2023
+  const [selectedDate, setSelectedDate] = useState(new Date(2023, 5, 6));
+  const [dateInput, setDateInput] = useState('June 6, 2023');
 
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const dayNames = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+  const dayNamesMobile = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
@@ -18,7 +22,10 @@ export function Calendar() {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
+    
+    // Get day of week, adjusting for Monday start (0 = Monday, 6 = Sunday)
+    let startingDayOfWeek = firstDay.getDay() - 1;
+    if (startingDayOfWeek < 0) startingDayOfWeek = 6;
 
     const days = [];
 
@@ -45,111 +52,88 @@ export function Calendar() {
 
   const days = getDaysInMonth(currentDate);
 
-  // Sample tasks for demonstration
-  const tasksByDate = {
-    20: [{ title: "Attend Nischal's Birthday Party", time: '6 PM' }],
-    21: [{ title: 'Landing Page Design', time: '4 PM' }],
-    25: [{ title: 'Team Meeting', time: '2 PM' }],
+  const isSelected = (day) => {
+    return day === selectedDate.getDate() &&
+           currentDate.getMonth() === selectedDate.getMonth() &&
+           currentDate.getFullYear() === selectedDate.getFullYear();
   };
 
   return (
-    <div className="w-full">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
-        <div className="flex items-center gap-2 sm:gap-4">
-          <MdEvent className="text-primary" size={24} className="sm:w-8 sm:h-8" />
-          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Calendar</h1>
+    <div className="w-full h-full flex flex-col items-center justify-center p-4">
+      {/* Calendar Card */}
+      <div className="bg-white rounded-xl lg:rounded-2xl shadow-lg border border-[#D9D9D9] p-4 sm:p-6 w-full max-w-sm sm:max-w-md">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h1 className="text-base sm:text-xl font-bold text-[#000000]">Calendar</h1>
+          <button
+            onClick={() => navigate(-1)}
+            className="text-[#FF6767] hover:text-[#F24E1E] transition-colors"
+          >
+            <MdKeyboardBackspace size={20} className="sm:w-6 sm:h-6" />
+          </button>
         </div>
-        <button className="px-3 sm:px-5 py-2 bg-primary text-white rounded-lg text-sm sm:text-base font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-1.5 sm:gap-2 shadow-md w-full sm:w-auto justify-center">
-          <MdAdd size={18} className="sm:w-5 sm:h-5" />
-          <span>Add Event</span>
-        </button>
-      </div>
 
-      {/* Main Content */}
-      <div>
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-soft border border-neutral-border/20">
-          {/* Calendar Header */}
-          <div className="flex items-center justify-between mb-4 sm:mb-8">
-            <button
-              onClick={goToPreviousMonth}
-              className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
-            >
-              <MdChevronLeft size={20} className="sm:w-6 sm:h-6 text-neutral-text" />
-            </button>
-            <h2 className="text-xl sm:text-2xl font-bold text-neutral-text">
-              {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-            </h2>
-            <button
-              onClick={goToNextMonth}
-              className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
-            >
-              <MdChevronRight size={20} className="sm:w-6 sm:h-6 text-neutral-text" />
-            </button>
-          </div>
+        {/* Date Input */}
+        <div className="relative mb-4 sm:mb-6">
+          <input
+            type="text"
+            value={dateInput}
+            onChange={(e) => setDateInput(e.target.value)}
+            className="w-full px-3 sm:px-4 py-2 sm:py-3 pr-8 sm:pr-10 rounded-lg bg-[#F8F8F8] border border-[#D9D9D9] focus:outline-none focus:border-[#A1A3AB] transition-colors text-[#000000] text-xs sm:text-sm"
+          />
+          <button
+            onClick={() => setDateInput('')}
+            className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-[#A1A3AB] hover:text-[#747474]"
+          >
+            <MdClose size={16} className="sm:w-[18px] sm:h-[18px]" />
+          </button>
+        </div>
 
-          {/* Calendar Grid */}
-          <div className="grid grid-cols-7 gap-2 mb-6">
-            {dayNames.map(day => (
-              <div key={day} className="text-center font-semibold text-neutral-text-muted py-2">
-                {day}
-              </div>
-            ))}
-            {days.map((day, index) => {
-              const isToday = day === new Date().getDate() &&
-                            currentDate.getMonth() === new Date().getMonth() &&
-                            currentDate.getFullYear() === new Date().getFullYear();
-              const isSelected = day === selectedDate.getDate() &&
-                                currentDate.getMonth() === selectedDate.getMonth() &&
-                                currentDate.getFullYear() === selectedDate.getFullYear();
-              const hasTasks = day && tasksByDate[day];
+        {/* Month Navigation */}
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <button
+            onClick={goToPreviousMonth}
+            className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border border-[#D9D9D9] hover:bg-[#F8F8F8] transition-colors"
+          >
+            <MdChevronLeft size={18} className="text-[#747474]" />
+          </button>
+          <h2 className="text-xs sm:text-base font-semibold text-[#000000]">
+            {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+          </h2>
+          <button
+            onClick={goToNextMonth}
+            className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg border border-[#D9D9D9] hover:bg-[#F8F8F8] transition-colors"
+          >
+            <MdChevronRight size={18} className="text-[#747474]" />
+          </button>
+        </div>
 
-              return (
-                <div
-                  key={index}
-                  onClick={() => day && setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day))}
-                  className={`
-                    aspect-square p-2 rounded-lg cursor-pointer transition-colors
-                    ${!day ? 'invisible' : ''}
-                    ${isToday ? 'bg-primary/10 border-2 border-primary' : ''}
-                    ${isSelected && !isToday ? 'bg-primary/5 border border-primary' : ''}
-                    ${!isToday && !isSelected ? 'hover:bg-neutral-bg' : ''}
-                  `}
-                >
-                  <div className={`text-sm font-medium ${isToday ? 'text-primary' : 'text-neutral-text'}`}>
-                    {day}
-                  </div>
-                  {hasTasks && (
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full mx-auto mt-1"></div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Selected Date Tasks */}
-          {selectedDate && tasksByDate[selectedDate.getDate()] && (
-            <div className="border-t border-neutral-border pt-6">
-              <h3 className="font-semibold text-lg text-neutral-text mb-4">
-                Tasks for {selectedDate.getDate()} {monthNames[selectedDate.getMonth()]}
-              </h3>
-              <div className="space-y-3">
-                {tasksByDate[selectedDate.getDate()].map((task, index) => (
-                  <div key={index} className="bg-neutral-bg rounded-lg p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium text-neutral-text">{task.title}</p>
-                        <p className="text-sm text-neutral-text-muted">{task.time}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+        {/* Calendar Grid */}
+        <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
+          {/* Day Headers */}
+          {dayNames.map((day, index) => (
+            <div key={day} className="text-center text-[10px] sm:text-xs font-medium text-[#A1A3AB] py-1 sm:py-2">
+              <span className="hidden sm:inline">{day}</span>
+              <span className="sm:hidden">{dayNamesMobile[index]}</span>
             </div>
-          )}
+          ))}
+          
+          {/* Days */}
+          {days.map((day, index) => (
+            <div
+              key={index}
+              onClick={() => day && setSelectedDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), day))}
+              className={`
+                aspect-square flex items-center justify-center cursor-pointer rounded-full text-xs sm:text-sm transition-colors
+                ${!day ? 'invisible' : ''}
+                ${isSelected(day) ? 'bg-[#5B5FC7] text-white' : 'text-[#747474] hover:bg-[#F8F8F8]'}
+              `}
+            >
+              {day}
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
 }
-

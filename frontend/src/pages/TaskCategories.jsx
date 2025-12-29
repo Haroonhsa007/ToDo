@@ -1,85 +1,139 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdAdd, MdEdit, MdDelete, MdSearch } from 'react-icons/md';
+import { MdEdit, MdDelete, MdAdd } from 'react-icons/md';
 
 export function TaskCategories() {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
 
-  const categories = [
-    { id: 1, name: 'Work', color: '#4A90E2', taskCount: 12 },
-    { id: 2, name: 'Personal', color: '#9B59B6', taskCount: 8 },
-    { id: 3, name: 'Shopping', color: '#FF8787', taskCount: 5 },
-    { id: 4, name: 'Health', color: '#04C400', taskCount: 3 },
-    { id: 5, name: 'Education', color: '#FFA500', taskCount: 7 },
-  ];
+  const [taskStatuses] = useState([
+    { id: 1, name: 'Completed' },
+    { id: 2, name: 'In Progress' },
+    { id: 3, name: 'Not Started' },
+  ]);
+
+  const [taskPriorities] = useState([
+    { id: 1, name: 'Extreme' },
+    { id: 2, name: 'Moderate' },
+    { id: 3, name: 'Low' },
+  ]);
 
   return (
-    <div className="w-full">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
-        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Task Categories</h1>
-        <button 
-          onClick={() => navigate('/create-category')}
-          className="px-3 sm:px-5 py-2 bg-primary text-white rounded-lg text-sm sm:text-base font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-1.5 sm:gap-2 shadow-md w-full sm:w-auto justify-center"
-        >
-          <MdAdd size={18} className="sm:w-5 sm:h-5" />
-          <span>Create Category</span>
-        </button>
-      </div>
-
-      {/* Main Content */}
-      <div>
-        {/* Search Bar */}
-        <div className="mb-4 sm:mb-6">
-          <div className="relative w-full max-w-2xl">
-            <input
-              type="text"
-              placeholder="Search categories..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="w-full px-4 sm:px-5 py-2.5 sm:py-3 pr-10 sm:pr-12 rounded-lg bg-neutral-bg border border-neutral-border focus:outline-none focus:border-primary transition-colors text-sm sm:text-base text-neutral-text placeholder-neutral-text-muted"
-            />
-            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white p-1.5 sm:p-2 rounded-lg hover:bg-primary-dark transition-colors">
-              <MdSearch size={18} className="sm:w-5 sm:h-5" />
-            </button>
-          </div>
+    <div className="w-full h-full flex flex-col">
+      {/* Main Container */}
+      <div className="bg-white rounded-xl lg:rounded-2xl border border-[#D3D3D3] p-4 sm:p-6 lg:p-8 flex-1 flex flex-col min-h-0">
+        {/* Header Row */}
+        <div className="flex items-start justify-between mb-4 sm:mb-6 shrink-0">
+          <h1 className="text-xl sm:text-2xl lg:text-[28px] font-bold text-[#000000] border-b-[3px] border-[#FF6767] pb-1">
+            Task Categories
+          </h1>
+          <button
+            onClick={() => navigate(-1)}
+            className="text-[#000000] hover:text-[#747474] transition-colors text-sm font-medium underline"
+          >
+            Go Back
+          </button>
         </div>
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {categories.map(category => (
-            <div
-              key={category.id}
-              className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-soft border border-neutral-border/20 hover:shadow-medium transition-shadow"
-            >
-              <div className="flex items-start justify-between mb-3 sm:mb-4">
-                <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                  <div
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center text-white font-bold text-base sm:text-lg shrink-0"
-                    style={{ backgroundColor: category.color }}
-                  >
-                    {category.name.charAt(0)}
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="font-semibold text-base sm:text-lg text-neutral-text truncate">{category.name}</h3>
-                    <p className="text-xs sm:text-sm text-neutral-text-muted">{category.taskCount} tasks</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-                  <button className="p-1.5 sm:p-2 text-neutral-text-muted hover:text-primary transition-colors">
-                    <MdEdit size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  </button>
-                  <button className="p-1.5 sm:p-2 text-neutral-text-muted hover:text-status-not-started transition-colors">
-                    <MdDelete size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  </button>
-                </div>
-              </div>
+        {/* Add Category Button */}
+        <button className="px-5 sm:px-6 py-2.5 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg text-sm font-medium transition-colors mb-6 sm:mb-8 self-start shrink-0">
+          Add Category
+        </button>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto min-h-0 space-y-6 sm:space-y-8">
+          {/* Task Status Section */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base sm:text-lg font-bold text-[#000000] border-b-[3px] border-[#FF6767] pb-1">
+                Task Status
+              </h2>
+              <button className="flex items-center gap-1 text-sm text-[#FF6767] hover:text-[#F24E1E] transition-colors font-medium">
+                <MdAdd size={18} className="text-[#FF6767]" />
+                <span>Add Task Status</span>
+              </button>
             </div>
-          ))}
+
+            {/* Status Table */}
+            <div className="border border-[#D3D3D3] rounded-xl overflow-hidden overflow-x-auto">
+              <table className="w-full min-w-[500px]">
+                <thead>
+                  <tr className="border-b border-[#D3D3D3]">
+                    <th className="px-4 sm:px-6 py-4 text-center text-sm font-semibold text-[#000000] w-16 sm:w-20">SN</th>
+                    <th className="px-4 sm:px-6 py-4 text-center text-sm font-semibold text-[#000000]">Task Status</th>
+                    <th className="px-4 sm:px-6 py-4 text-center text-sm font-semibold text-[#000000] w-52 sm:w-64">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {taskStatuses.map((status, index) => (
+                    <tr key={status.id} className="border-b border-[#D3D3D3] last:border-b-0">
+                      <td className="px-4 sm:px-6 py-4 text-center text-sm text-[#000000]">{index + 1}</td>
+                      <td className="px-4 sm:px-6 py-4 text-center text-sm text-[#000000]">{status.name}</td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="flex items-center justify-center gap-3 sm:gap-4">
+                          <button className="px-4 sm:px-5 py-2 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 min-w-[80px] justify-center">
+                            <MdEdit size={16} />
+                            <span>Edit</span>
+                          </button>
+                          <button className="px-4 sm:px-5 py-2 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 min-w-[80px] justify-center">
+                            <MdDelete size={16} />
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Task Priority Section */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base sm:text-lg font-bold text-[#000000] border-b-[3px] border-[#FF6767] pb-1">
+                Task Priority
+              </h2>
+              <button className="flex items-center gap-1 text-sm text-[#FF6767] hover:text-[#F24E1E] transition-colors font-medium">
+                <MdAdd size={18} className="text-[#FF6767]" />
+                <span>Add New Priority</span>
+              </button>
+            </div>
+
+            {/* Priority Table */}
+            <div className="border border-[#D3D3D3] rounded-xl overflow-hidden overflow-x-auto">
+              <table className="w-full min-w-[500px]">
+                <thead>
+                  <tr className="border-b border-[#D3D3D3]">
+                    <th className="px-4 sm:px-6 py-4 text-center text-sm font-semibold text-[#000000] w-16 sm:w-20">SN</th>
+                    <th className="px-4 sm:px-6 py-4 text-center text-sm font-semibold text-[#000000]">Task Priority</th>
+                    <th className="px-4 sm:px-6 py-4 text-center text-sm font-semibold text-[#000000] w-52 sm:w-64">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {taskPriorities.map((priority, index) => (
+                    <tr key={priority.id} className="border-b border-[#D3D3D3] last:border-b-0">
+                      <td className="px-4 sm:px-6 py-4 text-center text-sm text-[#000000]">{index + 1}</td>
+                      <td className="px-4 sm:px-6 py-4 text-center text-sm text-[#000000]">{priority.name}</td>
+                      <td className="px-4 sm:px-6 py-4">
+                        <div className="flex items-center justify-center gap-3 sm:gap-4">
+                          <button className="px-4 sm:px-5 py-2 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 min-w-[80px] justify-center">
+                            <MdEdit size={16} />
+                            <span>Edit</span>
+                          </button>
+                          <button className="px-4 sm:px-5 py-2 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 min-w-[80px] justify-center">
+                            <MdDelete size={16} />
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-

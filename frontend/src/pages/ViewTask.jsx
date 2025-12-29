@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { MdArrowBack, MdEdit, MdDelete, MdCalendarToday, MdFlag, MdImage } from 'react-icons/md';
+import { MdDelete, MdEdit, MdPriorityHigh } from 'react-icons/md';
 
 export function ViewTask() {
   const navigate = useNavigate();
@@ -9,126 +8,111 @@ export function ViewTask() {
   
   const taskData = task || {
     title: "Attend Nischal's Birthday Party",
-    description: "Buy gifts on the way and pick up cake from the bakery. (6 PM | Fresh Elements)",
+    description: `Buy gifts on the way and pick up cake from the bakery. (6 PM | Fresh Elements)
+
+1. A cake, with candles to blow out. (Layer cake, cupcake, flat sheet cake)
+2. The birthday song.
+3. A place to collect gifts.
+
+Optional:
+• Paper cone-shaped party hats, paper whistles that unroll.
+• Games, activities (carry an object with your knees, then drop it into a milk bottle.)
+• Lunch: sandwich halves, or pizza slices, juice, pretzels, potato chips...THEN cake & candles and the song.`,
     priority: 'Moderate',
     status: 'Not Started',
-    category: 'Personal',
     createdAt: '20/06/2023',
-    dueDate: '20/06/2023',
-    image: 'https://images.unsplash.com/photo-1464347744102-11db6282f854?w=200',
+    image: 'https://images.unsplash.com/photo-1529543544277-750e1a88dfc5?w=400',
+  };
+  
+  // Exact colors from design
+  const priorityColors = {
+    Extreme: '#F21E1E',
+    Moderate: '#42ADE2',
+    Low: '#05A301',
   };
 
   const statusColors = {
-    'Not Started': 'text-status-not-started',
-    'In Progress': 'text-status-progress',
-    Completed: 'text-status-completed',
-  };
-
-  const priorityColors = {
-    Extreme: 'text-red-600',
-    Moderate: 'text-secondary-blue',
-    Low: 'text-status-completed',
+    'Not Started': '#F21E1E',
+    'In Progress': '#0225FF',
+    'Completed': '#05A301',
   };
 
   return (
-    <div className="w-full">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
-        <div className="flex items-center gap-2 sm:gap-4">
+    <div className="w-full h-full flex flex-col">
+      {/* Main Container */}
+      <div className="bg-white rounded-xl lg:rounded-2xl border border-[#D3D3D3] p-4 sm:p-6 lg:p-8 flex-1 flex flex-col min-h-0 relative">
+        {/* Go Back Link - top right */}
+        <div className="absolute top-4 sm:top-6 lg:top-8 right-4 sm:right-6 lg:right-8">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-neutral-bg rounded-lg transition-colors shrink-0"
+            className="text-[#000000] hover:text-[#747474] transition-colors text-sm font-medium underline"
           >
-            <MdArrowBack size={20} className="sm:w-6 sm:h-6 text-neutral-text" />
-          </button>
-          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Task Details</h1>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-          <button
-            onClick={() => navigate('/edit-task', { state: { task } })}
-            className="px-3 sm:px-4 py-2 border-2 border-primary text-primary rounded-lg text-sm sm:text-base font-medium hover:bg-primary hover:text-white transition-all duration-200 flex items-center gap-1.5 sm:gap-2 flex-1 sm:flex-initial justify-center"
-          >
-            <MdEdit size={16} className="sm:w-[18px] sm:h-[18px]" />
-            <span>Edit</span>
-          </button>
-          <button
-            onClick={() => { /* Handle delete */ navigate(-1); }}
-            className="px-3 sm:px-4 py-2 border-2 border-status-not-started text-status-not-started rounded-lg text-sm sm:text-base font-medium hover:bg-status-not-started hover:text-white transition-all duration-200 flex items-center gap-1.5 sm:gap-2 flex-1 sm:flex-initial justify-center"
-          >
-            <MdDelete size={16} className="sm:w-[18px] sm:h-[18px]" />
-            <span>Delete</span>
+            Go Back
           </button>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-soft border border-neutral-border/20">
-          {/* Title */}
-          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-text mb-3 sm:mb-4">{taskData.title}</h2>
-
-          {/* Status and Priority */}
-          <div className="flex flex-wrap items-center gap-3 sm:gap-6 mb-4 sm:mb-6">
-            <div className="flex items-center gap-2">
-              <span className="text-neutral-text-muted">Status:</span>
-              <span className={`font-semibold ${statusColors[taskData.status] || statusColors['Not Started']}`}>
-                {taskData.status}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MdFlag className="text-neutral-text-muted" />
-              <span className="text-neutral-text-muted">Priority:</span>
-              <span className={`font-semibold ${priorityColors[taskData.priority] || priorityColors['Moderate']}`}>
-                {taskData.priority}
-              </span>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-neutral-text mb-2">Description</h3>
-            <p className="text-neutral-text-light leading-relaxed">{taskData.description}</p>
-          </div>
-
+        {/* Header - Image and Details side by side */}
+        <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6">
           {/* Image */}
           {taskData.image && (
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold text-neutral-text mb-2">
-                <MdImage className="inline mr-2" />
-                Attached Image
-              </h3>
-              <div className="rounded-xl overflow-hidden shadow-md max-w-md">
-                <img src={taskData.image} alt={taskData.title} className="w-full h-auto" />
-              </div>
+            <div className="w-full sm:w-[180px] lg:w-[200px] h-40 sm:h-[160px] lg:h-[180px] rounded-xl overflow-hidden shrink-0">
+              <img 
+                src={taskData.image} 
+                alt={taskData.title}
+                className="w-full h-full object-cover"
+              />
             </div>
           )}
 
-          {/* Details Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <h3 className="text-sm font-medium text-neutral-text-muted mb-1">Category</h3>
-              <p className="text-neutral-text font-medium">{taskData.category || 'Uncategorized'}</p>
+          {/* Title and Meta */}
+          <div className="flex-1 min-w-0 pt-0 sm:pt-2">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#000000] mb-3 pr-20">
+              {taskData.title}
+            </h1>
+
+            <div className="space-y-2">
+              <p className="text-sm lg:text-base">
+                <span className="text-[#000000]">Priority: </span>
+                <span style={{ color: priorityColors[taskData.priority] }}>{taskData.priority}</span>
+              </p>
+              <p className="text-sm lg:text-base">
+                <span className="text-[#000000]">Status: </span>
+                <span style={{ color: statusColors[taskData.status] }}>{taskData.status}</span>
+              </p>
+              <p className="text-xs lg:text-sm text-[#A1A3AB]">Created on: {taskData.createdAt}</p>
             </div>
-            <div>
-              <h3 className="text-sm font-medium text-neutral-text-muted mb-1">
-                <MdCalendarToday className="inline mr-2" />
-                Created On
-              </h3>
-              <p className="text-neutral-text font-medium">{taskData.createdAt}</p>
-            </div>
-            {taskData.dueDate && (
-              <div>
-                <h3 className="text-sm font-medium text-neutral-text-muted mb-1">
-                  <MdCalendarToday className="inline mr-2" />
-                  Due Date
-                </h3>
-                <p className="text-neutral-text font-medium">{taskData.dueDate}</p>
-              </div>
-            )}
           </div>
+        </div>
+
+        {/* Description */}
+        <div className="flex-1 overflow-y-auto min-h-0 pb-16">
+          <div className="text-sm lg:text-base text-[#747474] leading-relaxed whitespace-pre-line">
+            {taskData.description}
+          </div>
+        </div>
+
+        {/* Action Buttons - bottom right */}
+        <div className="absolute bottom-4 sm:bottom-6 lg:bottom-8 right-4 sm:right-6 lg:right-8 flex items-center gap-2 sm:gap-3">
+          <button
+            onClick={() => {/* Handle delete */}}
+            className="w-10 h-10 lg:w-11 lg:h-11 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg flex items-center justify-center transition-colors"
+          >
+            <MdDelete size={22} />
+          </button>
+          <button
+            onClick={() => navigate('/edit-task', { state: { task: taskData } })}
+            className="w-10 h-10 lg:w-11 lg:h-11 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg flex items-center justify-center transition-colors"
+          >
+            <MdEdit size={22} />
+          </button>
+          <button
+            onClick={() => {/* Handle vital/priority */}}
+            className="w-10 h-10 lg:w-11 lg:h-11 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg flex items-center justify-center transition-colors"
+          >
+            <MdPriorityHigh size={22} />
+          </button>
         </div>
       </div>
     </div>
   );
 }
-

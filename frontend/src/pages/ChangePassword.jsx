@@ -1,140 +1,127 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdLock, MdVisibility, MdVisibilityOff } from 'react-icons/md';
 
 export function ChangePassword() {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   });
-  const [showPasswords, setShowPasswords] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle password change logic
+    // Handle password change
+    navigate(-1);
   };
 
   return (
-    <div className="w-full">
-      {/* Header */}
-      <div className="mb-4 sm:mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Change Password</h1>
-      </div>
+    <div className="w-full h-full flex flex-col">
+      {/* Main Container */}
+      <div className="bg-white rounded-xl lg:rounded-2xl border border-[#D3D3D3] p-4 sm:p-6 lg:p-8 flex-1 flex flex-col min-h-0 relative">
+        {/* Header Row */}
+        <div className="flex items-start justify-between mb-6">
+          <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#000000] border-b-2 border-[#FF6767] pb-1">
+            Change Password
+          </h1>
+          <button
+            onClick={() => navigate(-1)}
+            className="text-[#000000] hover:text-[#747474] transition-colors text-sm font-medium underline"
+          >
+            Go Back
+          </button>
+        </div>
 
-      {/* Main Content */}
-      <div className="max-w-4xl mx-auto">
-        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-          {/* Current Password */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-text mb-2">
-              <MdLock className="inline mr-2" />
-              Current Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPasswords.current ? 'text' : 'password'}
-                name="currentPassword"
-                value={formData.currentPassword}
-                onChange={handleChange}
-                placeholder="Enter current password"
-                required
-                className="w-full px-4 py-3 pr-12 rounded-lg bg-neutral-bg border border-neutral-border focus:outline-none focus:border-primary transition-colors text-neutral-text"
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto min-h-0">
+          {/* User Profile Section */}
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-[#D9D9D9] shrink-0">
+              <img 
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200" 
+                alt="Profile"
+                className="w-full h-full object-cover"
               />
-              <button
-                type="button"
-                onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-text-muted hover:text-neutral-text"
-              >
-                {showPasswords.current ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
-              </button>
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold text-[#000000]">Sundar Gurung</h2>
+              <p className="text-sm text-[#747474]">sundargurung360@gmail.com</p>
             </div>
           </div>
 
-          {/* New Password */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-text mb-2">
-              New Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPasswords.new ? 'text' : 'password'}
-                name="newPassword"
-                value={formData.newPassword}
-                onChange={handleChange}
-                placeholder="Enter new password"
-                required
-                className="w-full px-4 py-3 pr-12 rounded-lg bg-neutral-bg border border-neutral-border focus:outline-none focus:border-primary transition-colors text-neutral-text"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-text-muted hover:text-neutral-text"
-              >
-                {showPasswords.new ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
-              </button>
-            </div>
-            <p className="text-xs text-neutral-text-muted mt-1">
-              Password must be at least 8 characters long
-            </p>
-          </div>
+          {/* Form Container */}
+          <form onSubmit={handleSubmit}>
+            <div className="border border-[#D3D3D3] rounded-xl p-4 sm:p-6 max-w-2xl">
+              {/* Current Password */}
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-[#000000] mb-2">
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  name="currentPassword"
+                  value={formData.currentPassword}
+                  onChange={handleChange}
+                  className="w-full max-w-md h-11 px-4 rounded-lg bg-white border border-[#D3D3D3] focus:outline-none focus:border-[#A1A3AB] transition-colors text-[#000000] text-sm"
+                />
+              </div>
 
-          {/* Confirm Password */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-text mb-2">
-              Confirm New Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPasswords.confirm ? 'text' : 'password'}
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Confirm new password"
-                required
-                className="w-full px-4 py-3 pr-12 rounded-lg bg-neutral-bg border border-neutral-border focus:outline-none focus:border-primary transition-colors text-neutral-text"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-text-muted hover:text-neutral-text"
-              >
-                {showPasswords.confirm ? <MdVisibilityOff size={20} /> : <MdVisibility size={20} />}
-              </button>
-            </div>
-          </div>
+              {/* New Password */}
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-[#000000] mb-2">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  name="newPassword"
+                  value={formData.newPassword}
+                  onChange={handleChange}
+                  className="w-full max-w-md h-11 px-4 rounded-lg bg-white border border-[#D3D3D3] focus:outline-none focus:border-[#A1A3AB] transition-colors text-[#000000] text-sm"
+                />
+              </div>
 
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-4">
-            <button
-              type="submit"
-              className="px-5 sm:px-6 py-2.5 sm:py-3 bg-primary text-white rounded-lg text-sm sm:text-base font-medium hover:bg-primary-dark transition-colors shadow-md w-full sm:w-auto"
-            >
-              Update Password
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/settings')}
-              className="px-5 sm:px-6 py-2.5 sm:py-3 border-2 border-neutral-border text-neutral-text rounded-lg text-sm sm:text-base font-medium hover:bg-neutral-bg transition-colors w-full sm:w-auto"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+              {/* Confirm Password */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-[#000000] mb-2">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="w-full max-w-md h-11 px-4 rounded-lg bg-white border border-[#D3D3D3] focus:outline-none focus:border-[#A1A3AB] transition-colors text-[#000000] text-sm"
+                />
+              </div>
+
+              {/* Buttons */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  Update Password
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate(-1)}
+                  className="px-6 py-2.5 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
 }
-
