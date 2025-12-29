@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MdSearch, MdAdd } from 'react-icons/md';
 import { TaskCard } from '../components/features/TaskCard';
 
 export function Vitals() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
 
   const vitalTasks = [
@@ -27,31 +29,34 @@ export function Vitals() {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
         <div>
-          <h1 className="text-3xl font-bold text-neutral-text">Vital Tasks</h1>
-          <p className="text-neutral-text-muted mt-1">High priority tasks that need immediate attention</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Vital Tasks</h1>
+          <p className="text-neutral-text-muted mt-1 text-sm sm:text-base">High priority tasks that need immediate attention</p>
         </div>
-        <button className="px-5 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md">
-          <MdAdd size={20} />
-          Add Vital Task
+        <button 
+          onClick={() => navigate('/add-task')}
+          className="px-3 sm:px-5 py-2 bg-primary text-white rounded-lg text-sm sm:text-base font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-1.5 sm:gap-2 shadow-md w-full sm:w-auto justify-center"
+        >
+          <MdAdd size={18} className="sm:w-5 sm:h-5" />
+          <span>Add Vital Task</span>
         </button>
       </div>
 
       {/* Main Content */}
       <div>
         {/* Search Bar */}
-        <div className="mb-6">
-          <div className="relative max-w-2xl">
+        <div className="mb-4 sm:mb-6">
+          <div className="relative w-full max-w-2xl">
             <input
               type="text"
               placeholder="Search vital tasks..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full px-5 py-3 pr-12 rounded-lg bg-neutral-bg border border-neutral-border focus:outline-none focus:border-primary transition-colors text-neutral-text placeholder-neutral-text-muted"
+              className="w-full px-4 sm:px-5 py-2.5 sm:py-3 pr-10 sm:pr-12 rounded-lg bg-neutral-bg border border-neutral-border focus:outline-none focus:border-primary transition-colors text-sm sm:text-base text-neutral-text placeholder-neutral-text-muted"
             />
-            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white p-2 rounded-lg hover:bg-primary-dark transition-colors">
-              <MdSearch size={20} />
+            <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white p-1.5 sm:p-2 rounded-lg hover:bg-primary-dark transition-colors">
+              <MdSearch size={18} className="sm:w-5 sm:h-5" />
             </button>
           </div>
         </div>

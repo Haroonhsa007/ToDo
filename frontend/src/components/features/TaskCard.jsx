@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 
 const statusColors = {
@@ -20,7 +21,9 @@ export function TaskCard({
   image,
   createdAt,
   isCompleted = false,
+  ...taskProps
 }) {
+  const navigate = useNavigate();
   const statusColor = statusColors[status] || statusColors['Not Started'];
   const priorityColor = priorityColors[priority] || priorityColors['Moderate'];
 
@@ -31,8 +34,19 @@ export function TaskCard({
     return 'border-status-not-started'; // Not Started
   };
 
+  const handleCardClick = () => {
+    navigate('/view-task', { 
+      state: { 
+        task: { title, description, priority, status, image, createdAt, ...taskProps } 
+      } 
+    });
+  };
+
   return (
-    <div className="bg-white rounded-2xl p-5 shadow-soft hover:shadow-medium transition-all border border-neutral-border/20">
+    <div 
+      onClick={handleCardClick}
+      className="bg-white rounded-2xl p-5 shadow-soft hover:shadow-medium transition-all border border-neutral-border/20 cursor-pointer"
+    >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2">
           <div

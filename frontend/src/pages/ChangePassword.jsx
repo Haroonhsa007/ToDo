@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MdLock, MdVisibility, MdVisibilityOff } from 'react-icons/md';
 
 export function ChangePassword() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -28,13 +30,13 @@ export function ChangePassword() {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-neutral-text">Change Password</h1>
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Change Password</h1>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl">
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="max-w-4xl mx-auto">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           {/* Current Password */}
           <div>
             <label className="block text-sm font-medium text-neutral-text mb-2">
@@ -115,16 +117,17 @@ export function ChangePassword() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-4">
             <button
               type="submit"
-              className="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors shadow-md"
+              className="px-5 sm:px-6 py-2.5 sm:py-3 bg-primary text-white rounded-lg text-sm sm:text-base font-medium hover:bg-primary-dark transition-colors shadow-md w-full sm:w-auto"
             >
               Update Password
             </button>
             <button
               type="button"
-              className="px-6 py-3 border-2 border-neutral-border text-neutral-text rounded-lg font-medium hover:bg-neutral-bg transition-colors"
+              onClick={() => navigate('/settings')}
+              className="px-5 sm:px-6 py-2.5 sm:py-3 border-2 border-neutral-border text-neutral-text rounded-lg text-sm sm:text-base font-medium hover:bg-neutral-bg transition-colors w-full sm:w-auto"
             >
               Cancel
             </button>

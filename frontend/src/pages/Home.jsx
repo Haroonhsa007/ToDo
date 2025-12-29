@@ -60,21 +60,21 @@ export function Home() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
           Welcome to Your React App
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-base sm:text-lg text-gray-600">
           A professional, scalable React setup with Tailwind CSS
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
         <Card>
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Counter Example</h2>
-          <div className="space-y-4">
-            <p className="text-3xl font-bold text-blue-600">{count}</p>
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 sm:mb-4">Counter Example</h2>
+          <div className="space-y-3 sm:space-y-4">
+            <p className="text-2xl sm:text-3xl font-bold text-blue-600">{count}</p>
             <div className="flex gap-2 flex-wrap">
               <Button onClick={() => setCount(count + 1)}>Increment</Button>
               <Button variant="secondary" onClick={() => setCount(count - 1)}>
@@ -88,8 +88,8 @@ export function Home() {
         </Card>
 
         <Card>
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">LocalStorage Hook</h2>
-          <div className="space-y-4">
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 sm:mb-4">LocalStorage Hook</h2>
+          <div className="space-y-3 sm:space-y-4">
             <p className="text-gray-600">
               Saved count: <span className="font-bold text-blue-600">{savedCount}</span>
             </p>
@@ -98,8 +98,8 @@ export function Home() {
         </Card>
 
         <Card>
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Toast Notifications</h2>
-          <div className="space-y-3">
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 sm:mb-4">Toast Notifications</h2>
+          <div className="space-y-2 sm:space-y-3">
             <p className="text-gray-600 text-sm mb-3">
               Click buttons to see different toast types
             </p>
@@ -121,8 +121,8 @@ export function Home() {
         </Card>
 
         <Card>
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">API Integration</h2>
-          <div className="space-y-4">
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 sm:mb-4">API Integration</h2>
+          <div className="space-y-3 sm:space-y-4">
             <p className="text-gray-600 text-sm">
               Test Axios API calls with automatic error handling
             </p>
@@ -138,8 +138,8 @@ export function Home() {
       </div>
 
       <Card>
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Features Included</h2>
-        <ul className="space-y-2 text-gray-700">
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 sm:mb-4">Features Included</h2>
+        <ul className="space-y-2 text-sm sm:text-base text-gray-700">
           <li className="flex items-start">
             <span className="text-green-500 mr-2">✓</span>
             <span>React 19 with Vite for fast development</span>

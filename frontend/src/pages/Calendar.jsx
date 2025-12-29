@@ -55,36 +55,36 @@ export function Calendar() {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <MdEvent className="text-primary" size={32} />
-          <h1 className="text-3xl font-bold text-neutral-text">Calendar</h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <MdEvent className="text-primary" size={24} className="sm:w-8 sm:h-8" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Calendar</h1>
         </div>
-        <button className="px-5 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md">
-          <MdAdd size={20} />
-          Add Event
+        <button className="px-3 sm:px-5 py-2 bg-primary text-white rounded-lg text-sm sm:text-base font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-1.5 sm:gap-2 shadow-md w-full sm:w-auto justify-center">
+          <MdAdd size={18} className="sm:w-5 sm:h-5" />
+          <span>Add Event</span>
         </button>
       </div>
 
       {/* Main Content */}
       <div>
-        <div className="bg-white rounded-2xl p-8 shadow-soft border border-neutral-border/20">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-soft border border-neutral-border/20">
           {/* Calendar Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-4 sm:mb-8">
             <button
               onClick={goToPreviousMonth}
               className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
             >
-              <MdChevronLeft size={24} className="text-neutral-text" />
+              <MdChevronLeft size={20} className="sm:w-6 sm:h-6 text-neutral-text" />
             </button>
-            <h2 className="text-2xl font-bold text-neutral-text">
+            <h2 className="text-xl sm:text-2xl font-bold text-neutral-text">
               {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
             </h2>
             <button
               onClick={goToNextMonth}
               className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
             >
-              <MdChevronRight size={24} className="text-neutral-text" />
+              <MdChevronRight size={20} className="sm:w-6 sm:h-6 text-neutral-text" />
             </button>
           </div>
 

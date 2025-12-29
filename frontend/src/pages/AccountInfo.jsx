@@ -25,22 +25,22 @@ export function AccountInfo() {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-neutral-text">Account Information</h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
+        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Account Information</h1>
         <button
           onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-          className="px-5 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md"
+          className="px-4 sm:px-5 py-2 bg-primary text-white rounded-lg text-sm sm:text-base font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md w-full sm:w-auto justify-center"
         >
-          <MdEdit size={20} />
-          {isEditing ? 'Save Changes' : 'Edit Profile'}
+          <MdEdit size={18} className="sm:w-5 sm:h-5" />
+          <span>{isEditing ? 'Save Changes' : 'Edit Profile'}</span>
         </button>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl">
+      <div className="max-w-4xl mx-auto">
         {/* Profile Picture */}
-        <div className="mb-8">
-          <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 ring-4 ring-primary/20">
+        <div className="mb-6 sm:mb-8">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden mx-auto mb-4 ring-4 ring-primary/20">
             <img
               src="https://ui-avatars.com/api/?name=Sundar+Gurung&background=FF6767&color=fff&size=200"
               alt="Profile"
@@ -57,7 +57,7 @@ export function AccountInfo() {
         </div>
 
         {/* Form */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Name */}
           <div>
             <label className="block text-sm font-medium text-neutral-text mb-2">

@@ -25,34 +25,43 @@ export function Layout({ children, onLogout }) {
 		setIsSidebarCollapsed(!isSidebarCollapsed);
 	};
 
+	// Close sidebar when clicking outside on mobile
+	useEffect(() => {
+		if (!isSidebarCollapsed && isMobile) {
+			const handleClickOutside = (e) => {
+				if (!e.target.closest('aside') && !e.target.closest('button[aria-label="Toggle sidebar"]')) {
+					setIsSidebarCollapsed(true);
+				}
+			};
+			document.addEventListener('click', handleClickOutside);
+			return () => document.removeEventListener('click', handleClickOutside);
+		}
+	}, [isSidebarCollapsed, isMobile]);
+
 	return (
-		<div>
+		<div className="min-h-screen bg-[#F8F8F8]">
 			{/* Header/Navbar */}
 			<Header onSidebarToggle={toggleSidebar} />
 
-			<div className="fixed inset-0 flex bg-[#543fa0] ">
+			<div className="flex relative min-h-[calc(100vh-64px)] lg:min-h-[calc(100vh-80px)]">
 				{/* Sidebar */}
 				<Sidebar onLogout={onLogout} isCollapsed={isSidebarCollapsed} onToggle={toggleSidebar} />
 
 				{/* Main Content Area */}
 				<div
 					className={`
-						flex-1 flex flex-col w-full
+						flex-1 flex flex-col
 						transition-all duration-300 ease-in-out
-						${isSidebarCollapsed ? 'ml-0 lg:ml-20' : 'ml-0 lg:ml-72'}
-						overflow-hidden
+						${isMobile ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-72'}
 					`}
 				>
+					{/* Main Content */}
 					<main
 						className={`
-							flex-1
+							flex-1 overflow-y-auto
 							transition-all duration-300 ease-in-out
-							pt-16 
 							px-4 sm:px-6 lg:px-8 py-6 lg:py-8
-							overflow-y-auto
-							bg-white
 						`}
-						style={{ height: '100vh' }}
 					>
 						{children}
 					</main>

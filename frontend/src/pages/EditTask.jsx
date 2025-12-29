@@ -32,19 +32,19 @@ export function EditTask() {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
+          className="p-2 hover:bg-neutral-bg rounded-lg transition-colors shrink-0"
         >
-          <MdArrowBack size={24} className="text-neutral-text" />
+          <MdArrowBack size={20} className="sm:w-6 sm:h-6 text-neutral-text" />
         </button>
-        <h1 className="text-3xl font-bold text-neutral-text">Edit Task</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Edit Task</h1>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl">
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="max-w-4xl mx-auto">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-neutral-text mb-2">
@@ -143,17 +143,17 @@ export function EditTask() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-4">
             <button
               type="submit"
-              className="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors shadow-md"
+              className="px-5 sm:px-6 py-2.5 sm:py-3 bg-primary text-white rounded-lg text-sm sm:text-base font-medium hover:bg-primary-dark transition-colors shadow-md w-full sm:w-auto"
             >
               Update Task
             </button>
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="px-6 py-3 border-2 border-neutral-border text-neutral-text rounded-lg font-medium hover:bg-neutral-bg transition-colors"
+              className="px-5 sm:px-6 py-2.5 sm:py-3 border-2 border-neutral-border text-neutral-text rounded-lg text-sm sm:text-base font-medium hover:bg-neutral-bg transition-colors w-full sm:w-auto"
             >
               Cancel
             </button>

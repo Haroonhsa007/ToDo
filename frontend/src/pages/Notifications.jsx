@@ -54,20 +54,20 @@ export function Notifications() {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <MdNotifications className="text-primary" size={32} />
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <MdNotifications className="text-primary" size={24} className="sm:w-8 sm:h-8" />
           <div>
-            <h1 className="text-3xl font-bold text-neutral-text">Notifications</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Notifications</h1>
             {unreadCount > 0 && (
-              <p className="text-sm text-neutral-text-muted">{unreadCount} unread notifications</p>
+              <p className="text-xs sm:text-sm text-neutral-text-muted">{unreadCount} unread notifications</p>
             )}
           </div>
         </div>
         {unreadCount > 0 && (
           <button
             onClick={markAllAsRead}
-            className="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm"
+            className="px-3 sm:px-4 py-2 bg-primary text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-primary-dark transition-colors w-full sm:w-auto"
           >
             Mark all as read
           </button>
@@ -82,11 +82,11 @@ export function Notifications() {
             <p className="text-neutral-text-muted text-lg">No notifications</p>
           </div>
         ) : (
-          <div className="space-y-4 max-w-4xl">
+          <div className="space-y-3 sm:space-y-4 max-w-4xl">
             {notifications.map(notification => (
               <div
                 key={notification.id}
-                className={`bg-white rounded-2xl p-6 shadow-soft border border-neutral-border/20 hover:shadow-medium transition-shadow ${
+                className={`bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-soft border border-neutral-border/20 hover:shadow-medium transition-shadow ${
                   !notification.read ? 'border-l-4 border-l-primary' : ''
                 }`}
               >

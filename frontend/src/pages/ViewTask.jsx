@@ -33,42 +33,42 @@ export function ViewTask() {
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-6 gap-3 sm:gap-0">
+        <div className="flex items-center gap-2 sm:gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
+            className="p-2 hover:bg-neutral-bg rounded-lg transition-colors shrink-0"
           >
-            <MdArrowBack size={24} className="text-neutral-text" />
+            <MdArrowBack size={20} className="sm:w-6 sm:h-6 text-neutral-text" />
           </button>
-          <h1 className="text-3xl font-bold text-neutral-text">Task Details</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text">Task Details</h1>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <button
             onClick={() => navigate('/edit-task', { state: { task } })}
-            className="px-4 py-2 border-2 border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all duration-200 flex items-center gap-2"
+            className="px-3 sm:px-4 py-2 border-2 border-primary text-primary rounded-lg text-sm sm:text-base font-medium hover:bg-primary hover:text-white transition-all duration-200 flex items-center gap-1.5 sm:gap-2 flex-1 sm:flex-initial justify-center"
           >
-            <MdEdit size={18} />
-            Edit
+            <MdEdit size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <span>Edit</span>
           </button>
           <button
             onClick={() => { /* Handle delete */ navigate(-1); }}
-            className="px-4 py-2 border-2 border-status-not-started text-status-not-started rounded-lg font-medium hover:bg-status-not-started hover:text-white transition-all duration-200 flex items-center gap-2"
+            className="px-3 sm:px-4 py-2 border-2 border-status-not-started text-status-not-started rounded-lg text-sm sm:text-base font-medium hover:bg-status-not-started hover:text-white transition-all duration-200 flex items-center gap-1.5 sm:gap-2 flex-1 sm:flex-initial justify-center"
           >
-            <MdDelete size={18} />
-            Delete
+            <MdDelete size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <span>Delete</span>
           </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl">
-        <div className="bg-white rounded-2xl p-8 shadow-soft border border-neutral-border/20">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-soft border border-neutral-border/20">
           {/* Title */}
-          <h2 className="text-3xl font-bold text-neutral-text mb-4">{taskData.title}</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-text mb-3 sm:mb-4">{taskData.title}</h2>
 
           {/* Status and Priority */}
-          <div className="flex items-center gap-6 mb-6">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-6 mb-4 sm:mb-6">
             <div className="flex items-center gap-2">
               <span className="text-neutral-text-muted">Status:</span>
               <span className={`font-semibold ${statusColors[taskData.status] || statusColors['Not Started']}`}>

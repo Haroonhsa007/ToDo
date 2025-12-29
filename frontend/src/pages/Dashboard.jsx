@@ -8,12 +8,15 @@ export function Dashboard() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const todayDate = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+  // Format date as "20 June • Today"
+  const formatDate = () => {
+    const today = new Date();
+    const day = today.getDate();
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+      'July', 'August', 'September', 'October', 'November', 'December'];
+    const month = monthNames[today.getMonth()];
+    return `${day} ${month} • Today`;
+  };
 
   // Sample tasks data
   const tasks = [
@@ -64,36 +67,34 @@ export function Dashboard() {
   return (
     <div className="w-full">
       {/* Welcome Section */}
-      <div className="flex items-start justify-between mb-6">
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-4">
-            <h1 className="text-4xl font-bold text-neutral-text">
-              Welcome back, Sundar
-            </h1>
-            <span className="text-4xl">👋</span>
-          </div>
+      <div className="mb-6">
+        <div className="flex items-center gap-3 mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-neutral-text">
+            Welcome back, Sundar
+          </h1>
+          <span className="text-3xl sm:text-4xl">👋</span>
+        </div>
 
-          {/* Team Members Row */}
-          <div className="flex items-center gap-4">
-            <div className="flex -space-x-2">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden shadow-sm bg-gray-200">
-                  <img
-                    src={`https://i.pravatar.cc/150?img=${i}`}
-                    alt={`Team member ${i}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="w-10 h-10 rounded-full border-2 border-white bg-neutral-bg flex items-center justify-center shadow-sm">
-              <span className="text-neutral-text-muted text-xs font-semibold">+4</span>
-            </div>
-            <button className="px-5 py-2.5 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md">
-              <MdAdd size={20} />
-              Invite
-            </button>
+        {/* Team Members Row */}
+        <div className="flex items-center gap-4">
+          <div className="flex -space-x-2">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="w-10 h-10 rounded-full border-2 border-white overflow-hidden shadow-sm bg-gray-200">
+                <img
+                  src={`https://i.pravatar.cc/150?img=${i}`}
+                  alt={`Team member ${i}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
           </div>
+          <div className="w-10 h-10 rounded-full border-2 border-white bg-neutral-bg flex items-center justify-center shadow-sm">
+            <span className="text-neutral-text-muted text-xs font-semibold">+4</span>
+          </div>
+          <button className="px-5 py-2.5 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md">
+            <MdAdd size={20} />
+            Invite
+          </button>
         </div>
       </div>
 
@@ -109,9 +110,12 @@ export function Dashboard() {
                 <div className="flex items-center gap-3">
                   <div className="w-6 h-6 border-2 border-neutral-border rounded-sm shrink-0"></div>
                   <h2 className="text-neutral-text text-xl font-semibold">To-Do</h2>
-                  <span className="text-neutral-text-muted text-sm">20 June • Today</span>
+                  <span className="text-neutral-text-muted text-sm">{formatDate()}</span>
                 </div>
-                <button className="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-1.5 text-sm shadow-sm">
+                <button 
+                  onClick={() => navigate('/add-task')}
+                  className="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-1.5 text-sm shadow-sm"
+                >
                   <MdAdd size={18} />
                   Add task
                 </button>
@@ -131,14 +135,14 @@ export function Dashboard() {
             <div className="bg-white rounded-2xl p-6 shadow-soft border border-neutral-border/20">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-6 h-6 shrink-0">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-text">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-text w-full h-full">
                     <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                   </svg>
                 </div>
                 <h2 className="text-neutral-text text-xl font-semibold">Task Status</h2>
               </div>
 
-              <div className="grid grid-cols-1 gap-6">
+              <div className="flex flex-col gap-6">
                 <TaskStatusChart percentage={84} label="Completed" color="completed" />
                 <TaskStatusChart percentage={46} label="In Progress" color="progress" />
                 <TaskStatusChart percentage={13} label="Not Started" color="not-started" />
