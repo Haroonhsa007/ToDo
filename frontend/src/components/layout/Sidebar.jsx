@@ -20,8 +20,7 @@ const menuItems = [
 
 export function Sidebar({ onLogout }) {
   return (
-    <aside className="fixed left-0 top-20 w-72 h-[calc(100vh-80px)] bg-[#FF6B6B] flex flex-col">
-      
+    <aside className="fixed left-0 top-20 w-72 h-[calc(100vh-80px)] bg-[#FF6B6B] flex flex-col rounded-r-[16px]">
       {/* Profile */}
       <div className="flex flex-col items-center pt-6 pb-8">
         <div className="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center">
@@ -68,7 +67,7 @@ export function Sidebar({ onLogout }) {
       </nav>
 
       {/* Logout */}
-      <div className="px-6 pb-6 mt-auto">
+      <div className="px-12 pb-25 mt-auto">
         <button
           onClick={onLogout}
           className="flex items-center gap-4 text-white text-sm opacity-90 hover:opacity-100"
