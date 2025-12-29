@@ -68,35 +68,23 @@ export function TaskCard({
               </span>
               <h3 className="font-bold text-[18px] leading-[1.1] text-neutral-text truncate">{title}</h3>
             </div>
-            <button
+
+            {/* <button
               onClick={e => e.stopPropagation()}
-              className="text-[#A0AFC0] hover:text-neutral-text transition-colors p-1 shrink-0 relative"
+              className="text-[#747474] hover:text-neutral-text transition-colors p-1 shrink-0 relative"
               tabIndex={-1}
               style={{
                 marginRight: '2px',
                 marginTop: '0px'
               }}
             >
-              {/* Hidden dots for pixel-perfect but empty spot */}
-              <BsThreeDotsVertical size={18} className="opacity-0 pointer-events-none" />
-            </button>
+              <BsThreeDotsVertical size={18} className="opacity-100 pointer-events-none" />
+            </button> 
+            */}
+
           </div>
-          <p className="text-[#A0AFC0] text-[15px] font-normal leading-[21px] mb-2 truncate">{description}</p>
-          <div className="flex items-center gap-5 text-[13px] mt-1 flex-wrap">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[#8896ab] text-[13px] leading-none">Priority:</span>
-              <span className="font-bold text-[13px] leading-none" style={{ color: priorityColor }}>{priority}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[#8896ab] text-[13px] leading-none">Status:</span>
-              <span className="font-bold text-[13px] leading-none" style={{ color: statusColor }}>{status}</span>
-            </div>
-            {createdAt && (
-              <div className="flex items-center ml-1">
-                <span className="text-[#BAC3CF] text-[13px] leading-none">Created on: {createdAt}</span>
-              </div>
-            )}
-          </div>
+          <p className="text-[#747474] text-[15px] font-normal leading-[21px] mb-2 truncate">{description}</p>
+
         </div>
         {/* Main Content Right - Image */}
         {image && (
@@ -108,6 +96,22 @@ export function TaskCard({
               draggable={false}
               style={{ pointerEvents: 'none' }}
             />
+          </div>
+        )}
+      </div>
+
+      <div className="flex items-center gap-5 text-[13px] mt-1 flex-wrap">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[#8896ab] text-[13px] leading-none">Priority:</span>
+          <span className="font-bold text-[13px] leading-none" style={{ color: priorityColor }}>{priority}</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[#8896ab] text-[13px] leading-none">Status:</span>
+          <span className="font-bold text-[13px] leading-none" style={{ color: statusColor }}>{status}</span>
+        </div>
+        {createdAt && (
+          <div className="flex items-center ml-1">
+            <span className="text-[#BAC3CF] text-[13px] leading-none">Created on: {createdAt}</span>
           </div>
         )}
       </div>
@@ -123,9 +127,9 @@ export function CompletedTaskCard({ title, description, image, completedAt }) {
     >
       <div className="flex gap-4">
         <div className="flex items-start">
-          <div 
+          <div
             className="w-5 h-5 rounded-full border-2 flex items-center justify-center mt-1"
-            style={{ 
+            style={{
               backgroundColor: statusColors['Completed'],
               borderColor: statusColors['Completed']
             }}

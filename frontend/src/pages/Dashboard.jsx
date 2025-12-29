@@ -65,18 +65,18 @@ export function Dashboard() {
   return (
     <div className="w-full">
       {/* Welcome Section */}
-      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="mb-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
         {/* Left Column - Welcome Message */}
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-text">
+        <div className="flex items-center gap-2">
+          <h1 className="text-base sm:text-lg lg:text-xl font-bold text-neutral-text">
             Welcome back, Sundar
           </h1>
-          <span className="text-2xl sm:text-3xl lg:text-4xl">👋</span>
+          <span className="text-base sm:text-lg lg:text-xl">👋</span>
         </div>
 
         {/* Right Column - Team Members and Invite Button */}
-        <div className="flex items-center gap-3 sm:gap-6 w-full sm:w-auto justify-between sm:justify-end">
-          <div className="flex -space-x-2 sm:-space-x-3">
+        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
+          <div className="flex -space-x-1 sm:-space-x-2">
             {[
               {
                 img: "https://images.unsplash.com/photo-1464347744102-11db6282f854?w=200",
@@ -101,7 +101,7 @@ export function Dashboard() {
             ].map((member, idx) => (
               <div
                 key={member.img}
-                className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-[18px] border-2 border-white overflow-hidden shadow-sm bg-gray-200 relative"
+                className="w-7 h-7 rounded-[8px] border-2 border-[#A1A3AB] overflow-hidden shadow-sm bg-gray-400 relative"
                 style={{ zIndex: 10 - idx }}
               >
                 <img
@@ -111,47 +111,64 @@ export function Dashboard() {
                 />
                 {idx === 4 && (
                   <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                    <span className="text-white text-2xl font-semibold select-none pointer-events-none drop-shadow-[0_2px_6px_rgba(0,0,0,0.25)]">+4</span>
+                    <span className="text-white text-xs font-semibold select-none pointer-events-none drop-shadow-[0_2px_6px_rgba(0,0,0,0.25)]">+4</span>
                   </div>
                 )}
               </div>
             ))}
           </div>
 
-          <button className="px-3 sm:px-5 py-2 sm:py-2.5 border-2 border-neutral-text text-neutral-text bg-white rounded-lg font-medium hover:bg-gray-50 transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow-md text-sm sm:text-base">
-            <MdPeople size={18} className="sm:w-5 sm:h-5" />
-            <span className="hidden xs:inline">Invite</span>
+          <button className="px-2 sm:px-3 py-1 sm:py-1.5 border-2 border-[#FF6B6B] text-[#FF6B6B] bg-white rounded-lg font-medium transition-all duration-200 flex items-center gap-1 text-xs hover:bg-white hover:shadow-none shadow-none"
+          >
+            <MdPeople size={16} className="sm:w-4 sm:h-4 text-[#FF6B6B]" />
+            <span className="">Invite</span>
           </button>
 
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="bg-[#F5F8] rounded-2xl p-4 sm:p-6 shadow border border-neutral-border/20">
+      {/* <div className="bg-white rounded-lg p-2 sm:p-3 shadow" style={{ border: '1px solid #A1A3AB' }}> */}
+      <div className=''>
         {/* Content Grid - 2 Columns */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {/* Column 1 - To-Do Tasks */}
           <div>
-            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-soft border border-neutral-border/20">
-              <div className="flex items-start justify-between mb-4 sm:mb-6">
-                <div className="flex items-start gap-2 sm:gap-3">
-                  <MdAccessTime className="w-5 h-5 sm:w-6 sm:h-6 text-neutral-text-muted shrink-0 mt-0.5" />
+            <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 shadow-2xl border border-[#A1A3AB]">
+              <div className="flex items-start justify-between mb-2 sm:mb-3">
+                <div className="flex items-start gap-1 sm:gap-2">
+                  <MdAccessTime className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-text-muted shrink-0 mt-0.5" />
                   <div className="flex flex-col">
-                    <h2 className="text-status-not-started text-lg sm:text-xl font-semibold mb-1">To-Do</h2>
-                    <span className="text-neutral-text-muted text-xs sm:text-sm">{formatDate()}</span>
+                    <h2 className="text-status-not-started text-sm sm:text-base font-semibold mb-0.5">To-Do</h2>
+                    <span className="text-neutral-text-muted text-[10px] sm:text-xs">{formatDate()}</span>
                   </div>
                 </div>
+
                 <button
                   onClick={() => navigate('/add-task')}
-                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-status-not-started rounded-lg font-medium hover:opacity-80 transition-all duration-200 flex items-center gap-1.5 text-xs sm:text-sm"
+                  className="flex items-center gap-1 px-1 py-1 bg-transparent border-none shadow-none hover:bg-transparent transition-all duration-200"
+                  style={{ color: '#A1A3AB', fontSize: '1rem', fontWeight: 400, lineHeight: 1, letterSpacing: 0 }}
                 >
-                  <MdAdd size={16} className="sm:w-[18px] sm:h-[18px]" />
-                  <span className="hidden sm:inline">Add task</span>
-                  <span className="sm:hidden">Add</span>
+                  <MdAdd
+                    size={18}
+                    style={{ color: '#FF4C23', minWidth: '18px', minHeight: '18px' }}
+                  />
+                  <span
+                    style={{
+                      color: '#A1A3AB',
+                      fontSize: '1rem',
+                      fontWeight: 400,
+                      letterSpacing: 0,
+                      lineHeight: 1.1,
+                    }}
+                  >
+                    Add Task
+                  </span>
                 </button>
+                
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-2 px-6">
                 {tasks.map((task, index) => (
                   <TaskCard key={index} {...task} />
                 ))}
@@ -160,19 +177,19 @@ export function Dashboard() {
           </div>
 
           {/* Column 2 - Task Status and Completed Tasks */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
             {/* Row 1 - Task Status Charts (Horizontal) */}
-            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-soft border border-neutral-border/20">
-              <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0">
+            <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 shadow-soft border border-neutral-border/20">
+              <div className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3">
+                <div className="w-4 h-4 sm:w-5 sm:h-5 shrink-0">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-neutral-text-muted w-full h-full">
                     <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                   </svg>
                 </div>
-                <h2 className="text-status-not-started text-lg sm:text-xl font-semibold">Task Status</h2>
+                <h2 className="text-status-not-started text-sm sm:text-base font-semibold">Task Status</h2>
               </div>
 
-              <div className="flex flex-row justify-around gap-1 xs:gap-2 sm:gap-3 lg:gap-4 w-full overflow-x-auto pb-2">
+              <div className="flex flex-row justify-around gap-0.5 xs:gap-1 sm:gap-1.5 lg:gap-2 w-full overflow-x-auto pb-1">
                 <TaskStatusChart percentage={84} label="Completed" color="completed" />
                 <TaskStatusChart percentage={46} label="In Progress" color="progress" />
                 <TaskStatusChart percentage={13} label="Not Started" color="not-started" />
@@ -180,17 +197,17 @@ export function Dashboard() {
             </div>
 
             {/* Row 2 - Completed Tasks (Latest 2) */}
-            <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-soft border border-neutral-border/20">
-              <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-status-completed flex items-center justify-center shrink-0">
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 shadow-soft border border-neutral-border/20">
+              <div className="flex items-center gap-1 sm:gap-2 mb-2 sm:mb-3">
+                <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-status-completed flex items-center justify-center shrink-0">
+                  <svg className="w-2 h-2 sm:w-3 sm:h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <h2 className="text-status-not-started text-lg sm:text-xl font-semibold">Completed Task</h2>
+                <h2 className="text-status-not-started text-sm sm:text-base font-semibold">Completed Task</h2>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {completedTasks.slice(0, 2).map((task, index) => (
                   <CompletedTaskCard key={index} {...task} />
                 ))}
