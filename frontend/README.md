@@ -72,12 +72,14 @@ The app will be available at `http://localhost:5173`
 
 ## Environment Variables
 
-Create a `.env` file in the root directory based on `.env.example`:
+Create a `.env` file in the root directory:
 
 ```env
-VITE_API_BASE_URL=http://localhost:3000/api
+VITE_API_BASE_URL=http://localhost:8000/api
 VITE_APP_ENV=development
 ```
+
+**Note**: See [BACKEND_API_DOCUMENTATION.md](./BACKEND_API_DOCUMENTATION.md) for detailed backend requirements and API documentation.
 
 ## Code Quality
 
