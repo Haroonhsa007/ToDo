@@ -1,6 +1,6 @@
 export function Help() {
   return (
-    <div className="w-full p-4 sm:p-6 lg:p-8">
+    <div className="w-full">
       <h1 className="text-2xl sm:text-3xl font-bold text-neutral-text mb-6">Help & Support</h1>
       <div className="max-w-4xl space-y-6">
         <div className="bg-white rounded-2xl p-6 shadow-soft border border-neutral-border/20">

@@ -26,14 +26,14 @@ export function ChangePassword() {
   };
 
   return (
-    <div className="flex-1 bg-white min-h-screen overflow-y-auto">
+    <div className="w-full">
       {/* Header */}
-      <header className="bg-white border-b border-neutral-border px-8 py-6">
+      <div className="mb-6">
         <h1 className="text-3xl font-bold text-neutral-text">Change Password</h1>
-      </header>
+      </div>
 
       {/* Main Content */}
-      <div className="p-8 max-w-4xl">
+      <div className="max-w-4xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Current Password */}
           <div>

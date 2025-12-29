@@ -13,20 +13,18 @@ export function TaskCategories() {
   ];
 
   return (
-    <div className="flex-1 bg-white min-h-screen overflow-y-auto">
+    <div className="w-full">
       {/* Header */}
-      <header className="bg-white border-b border-neutral-border px-8 py-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-neutral-text">Task Categories</h1>
-          <button className="px-5 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md">
-            <MdAdd size={20} />
-            Create Category
-          </button>
-        </div>
-      </header>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold text-neutral-text">Task Categories</h1>
+        <button className="px-5 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md">
+          <MdAdd size={20} />
+          Create Category
+        </button>
+      </div>
 
       {/* Main Content */}
-      <div className="p-8">
+      <div>
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative max-w-2xl">

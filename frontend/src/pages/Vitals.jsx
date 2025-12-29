@@ -25,23 +25,21 @@ export function Vitals() {
   ];
 
   return (
-    <div className="flex-1 bg-white min-h-screen overflow-y-auto">
+    <div className="w-full">
       {/* Header */}
-      <header className="bg-white border-b border-neutral-border px-8 py-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-neutral-text">Vital Tasks</h1>
-            <p className="text-neutral-text-muted mt-1">High priority tasks that need immediate attention</p>
-          </div>
-          <button className="px-5 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md">
-            <MdAdd size={20} />
-            Add Vital Task
-          </button>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-neutral-text">Vital Tasks</h1>
+          <p className="text-neutral-text-muted mt-1">High priority tasks that need immediate attention</p>
         </div>
-      </header>
+        <button className="px-5 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md">
+          <MdAdd size={20} />
+          Add Vital Task
+        </button>
+      </div>
 
       {/* Main Content */}
-      <div className="p-8">
+      <div>
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative max-w-2xl">

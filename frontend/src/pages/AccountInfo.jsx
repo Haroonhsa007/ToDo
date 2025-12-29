@@ -23,23 +23,21 @@ export function AccountInfo() {
   };
 
   return (
-    <div className="flex-1 bg-white min-h-screen overflow-y-auto">
+    <div className="w-full">
       {/* Header */}
-      <header className="bg-white border-b border-neutral-border px-8 py-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-neutral-text">Account Information</h1>
-          <button
-            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
-            className="px-5 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md"
-          >
-            <MdEdit size={20} />
-            {isEditing ? 'Save Changes' : 'Edit Profile'}
-          </button>
-        </div>
-      </header>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold text-neutral-text">Account Information</h1>
+        <button
+          onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+          className="px-5 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md"
+        >
+          <MdEdit size={20} />
+          {isEditing ? 'Save Changes' : 'Edit Profile'}
+        </button>
+      </div>
 
       {/* Main Content */}
-      <div className="p-8 max-w-4xl">
+      <div className="max-w-4xl">
         {/* Profile Picture */}
         <div className="mb-8">
           <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 ring-4 ring-primary/20">

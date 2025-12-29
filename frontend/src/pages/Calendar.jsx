@@ -53,23 +53,21 @@ export function Calendar() {
   };
 
   return (
-    <div className="flex-1 bg-white min-h-screen overflow-y-auto">
+    <div className="w-full">
       {/* Header */}
-      <header className="bg-white border-b border-neutral-border px-8 py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <MdEvent className="text-primary" size={32} />
-            <h1 className="text-3xl font-bold text-neutral-text">Calendar</h1>
-          </div>
-          <button className="px-5 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md">
-            <MdAdd size={20} />
-            Add Event
-          </button>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <MdEvent className="text-primary" size={32} />
+          <h1 className="text-3xl font-bold text-neutral-text">Calendar</h1>
         </div>
-      </header>
+        <button className="px-5 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all duration-200 flex items-center gap-2 shadow-md">
+          <MdAdd size={20} />
+          Add Event
+        </button>
+      </div>
 
       {/* Main Content */}
-      <div className="p-8">
+      <div>
         <div className="bg-white rounded-2xl p-8 shadow-soft border border-neutral-border/20">
           {/* Calendar Header */}
           <div className="flex items-center justify-between mb-8">

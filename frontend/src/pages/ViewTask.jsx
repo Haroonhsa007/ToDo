@@ -31,40 +31,38 @@ export function ViewTask() {
   };
 
   return (
-    <div className="flex-1 bg-white min-h-screen overflow-y-auto">
+    <div className="w-full">
       {/* Header */}
-      <header className="bg-white border-b border-neutral-border px-8 py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate(-1)}
-              className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
-            >
-              <MdArrowBack size={24} className="text-neutral-text" />
-            </button>
-            <h1 className="text-3xl font-bold text-neutral-text">Task Details</h1>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate('/edit-task', { state: { task } })}
-              className="px-4 py-2 border-2 border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all duration-200 flex items-center gap-2"
-            >
-              <MdEdit size={18} />
-              Edit
-            </button>
-            <button
-              onClick={() => { /* Handle delete */ navigate(-1); }}
-              className="px-4 py-2 border-2 border-status-not-started text-status-not-started rounded-lg font-medium hover:bg-status-not-started hover:text-white transition-all duration-200 flex items-center gap-2"
-            >
-              <MdDelete size={18} />
-              Delete
-            </button>
-          </div>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
+          >
+            <MdArrowBack size={24} className="text-neutral-text" />
+          </button>
+          <h1 className="text-3xl font-bold text-neutral-text">Task Details</h1>
         </div>
-      </header>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate('/edit-task', { state: { task } })}
+            className="px-4 py-2 border-2 border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-all duration-200 flex items-center gap-2"
+          >
+            <MdEdit size={18} />
+            Edit
+          </button>
+          <button
+            onClick={() => { /* Handle delete */ navigate(-1); }}
+            className="px-4 py-2 border-2 border-status-not-started text-status-not-started rounded-lg font-medium hover:bg-status-not-started hover:text-white transition-all duration-200 flex items-center gap-2"
+          >
+            <MdDelete size={18} />
+            Delete
+          </button>
+        </div>
+      </div>
 
       {/* Main Content */}
-      <div className="p-8 max-w-4xl">
+      <div className="max-w-4xl">
         <div className="bg-white rounded-2xl p-8 shadow-soft border border-neutral-border/20">
           {/* Title */}
           <h2 className="text-3xl font-bold text-neutral-text mb-4">{taskData.title}</h2>

@@ -27,22 +27,20 @@ export function AddTask() {
   };
 
   return (
-    <div className="flex-1 bg-white min-h-screen overflow-y-auto">
+    <div className="w-full">
       {/* Header */}
-      <header className="bg-white border-b border-neutral-border px-8 py-6">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
-          >
-            <MdArrowBack size={24} className="text-neutral-text" />
-          </button>
-          <h1 className="text-3xl font-bold text-neutral-text">Add New Task</h1>
-        </div>
-      </header>
+      <div className="flex items-center gap-4 mb-6">
+        <button
+          onClick={() => navigate(-1)}
+          className="p-2 hover:bg-neutral-bg rounded-lg transition-colors"
+        >
+          <MdArrowBack size={24} className="text-neutral-text" />
+        </button>
+        <h1 className="text-3xl font-bold text-neutral-text">Add New Task</h1>
+      </div>
 
       {/* Main Content */}
-      <div className="p-8 max-w-4xl">
+      <div className="max-w-4xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title */}
           <div>

@@ -62,12 +62,9 @@ export function Dashboard() {
   ];
 
   return (
-    // <div className="flex-1 bg-white min-h-screen overflow-y-auto">
-    <div className="flex-1 bg-yellow-500 min-h-screen overflow-y-auto">
-
-
+    <div className="w-full">
       {/* Welcome Section */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between mb-6">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-4">
             <h1 className="text-4xl font-bold text-neutral-text">
@@ -101,8 +98,7 @@ export function Dashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="p-8">
-
+      <div>
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column - To-Do Tasks */}

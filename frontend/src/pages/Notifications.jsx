@@ -52,32 +52,30 @@ export function Notifications() {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="flex-1 bg-white min-h-screen overflow-y-auto">
+    <div className="w-full">
       {/* Header */}
-      <header className="bg-white border-b border-neutral-border px-8 py-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <MdNotifications className="text-primary" size={32} />
-            <div>
-              <h1 className="text-3xl font-bold text-neutral-text">Notifications</h1>
-              {unreadCount > 0 && (
-                <p className="text-sm text-neutral-text-muted">{unreadCount} unread notifications</p>
-              )}
-            </div>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <MdNotifications className="text-primary" size={32} />
+          <div>
+            <h1 className="text-3xl font-bold text-neutral-text">Notifications</h1>
+            {unreadCount > 0 && (
+              <p className="text-sm text-neutral-text-muted">{unreadCount} unread notifications</p>
+            )}
           </div>
-          {unreadCount > 0 && (
-            <button
-              onClick={markAllAsRead}
-              className="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm"
-            >
-              Mark all as read
-            </button>
-          )}
         </div>
-      </header>
+        {unreadCount > 0 && (
+          <button
+            onClick={markAllAsRead}
+            className="px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-colors text-sm"
+          >
+            Mark all as read
+          </button>
+        )}
+      </div>
 
       {/* Main Content */}
-      <div className="p-8">
+      <div>
         {notifications.length === 0 ? (
           <div className="text-center py-12">
             <MdNotifications className="mx-auto text-neutral-text-muted mb-4" size={64} />
