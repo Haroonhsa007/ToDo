@@ -35,15 +35,10 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
       <aside
         className={`
           fixed left-0 bg-[#FF6B6B] flex flex-col rounded-r-[16px]
-          transition-all duration-300 ease-in-out z-20
+          transition-all duration-300 ease-in-out z-20 top-32
           ${isCollapsed ? 'w-16 sm:w-20 -translate-x-full lg:translate-x-0' : 'w-64 sm:w-72 translate-x-0'}
-          top-32 sm:top-32  h-[calc(100vh-32px)] sm:h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)]
+          h-[calc(100vh-64px)] sm:h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)]
         `}
-        style={{
-          // Properly support responsive top offset as a fallback
-          // tailwind handles it but add fallback for custom className
-          top: undefined,
-        }}
       >
         {/* Toggle Button */}
         <button
@@ -101,10 +96,9 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
                 to={item.path}
                 className={({ isActive }) =>
                   `flex items-center gap-2 sm:gap-3 lg:gap-4 px-2 sm:px-3 lg:px-5 py-2 sm:py-2.5 lg:py-3 rounded-xl transition
-                  ${
-                    isActive
-                      ? 'bg-white text-black font-semibold shadow-sm'
-                      : 'text-white hover:bg-white/10'
+                  ${isActive
+                    ? 'bg-white text-black font-semibold shadow-sm'
+                    : 'text-white hover:bg-white/10'
                   }
                   ${isCollapsed ? 'justify-center' : ''}
                   `
@@ -128,23 +122,22 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
 
         {/* Logout */}
         <div
-          className={`
-            mt-auto py-8 lg:py-18 transition-all duration-300 
-            ${isCollapsed ? 'px-2 flex justify-center' : 'px-4 lg:px-12'}
-          `}
+          className={`mt-auto py-28 lg:py-18 transition-all duration-300 ${isCollapsed ? 'px-2 flex justify-center' : 'px-4 lg:px-12'
+            }`}
         >
           <button
             onClick={onLogout}
             className={`
-              flex items-center gap-2 sm:gap-3 lg:gap-4 text-white text-xs lg:text-sm opacity-90 hover:opacity-100 w-full
-              ${isCollapsed ? 'justify-center' : ''}
-            `}
-            title={isCollapsed ? 'Logout' : ''}
+                flex items-center gap-2 sm:gap-3 lg:gap-4 text-white text-xs lg:text-sm opacity-90 xs:py-20 hover:opacity-50 w-full
+                ${isCollapsed ? 'justify-center' : ''}
+              `}
+            title={isCollapsed ? 'Logout' : 'Logout'}
           >
             <MdLogout className="text-lg lg:text-xl shrink-0" />
-            {!isCollapsed && <span>Logout</span>}
+            <span className={`${isCollapsed ? 'hidden' : ''}`}>Logout</span>
           </button>
         </div>
+
       </aside>
     </>
   );

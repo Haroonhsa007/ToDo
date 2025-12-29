@@ -3,9 +3,10 @@ export function TaskStatusChart({ percentage, label, color }) {
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   const colors = {
-    completed: '#04C400',
-    progress: '#4A90E2',
-    'not-started': '#FF6767',
+    'completed': '#04C400',
+    'progress': '#0225FF',
+    'not-started': '#F21E1E',
+    'stroke-Color': '#D9D9D9',
   };
 
   const strokeColor = colors[color] || colors.completed;
@@ -19,10 +20,10 @@ export function TaskStatusChart({ percentage, label, color }) {
             cx="56"
             cy="56"
             r="45"
-            stroke="currentColor"
+            stroke={colors['stroke-Color']}
             strokeWidth="10"
             fill="none"
-            className="text-neutral-border"
+            className="text-stroke-Color"
           />
           {/* Progress circle */}
           <circle

@@ -45,17 +45,14 @@ export function Layout({ children, onLogout }) {
 
 			<div className="flex relative min-h-[calc(100vh-64px)] lg:min-h-[calc(100vh-80px)]">
 				{/* Sidebar */}
-				
-				<div className="">
-					<Sidebar onLogout={onLogout} isCollapsed={isSidebarCollapsed} onToggle={toggleSidebar} />
-				</div>
+				<Sidebar onLogout={onLogout} isCollapsed={isSidebarCollapsed} onToggle={toggleSidebar} />
 
 				{/* Main Content Area */}
 				<div
 					className={`
-						flex-1 flex flex-col
+						flex-1 flex flex-col w-full
 						transition-all duration-300 ease-in-out
-						${isMobile ? 'ml-0' : isSidebarCollapsed ? 'ml-20' : 'ml-72'}
+						${isMobile ? 'ml-0' : isSidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}
 					`}
 				>
 					{/* Main Content */}
