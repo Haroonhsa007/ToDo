@@ -52,11 +52,11 @@ export function Layout({ children, onLogout }) {
 					className={`
 						flex-1 flex flex-col w-full min-h-0
 						transition-all duration-300 ease-in-out
-						${isMobile ? 'ml-0' : isSidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}
+						${isMobile ? 'ml-0' : isSidebarCollapsed ? 'lg:ml-20' : 'lg:ml-[365px]'}
 					`}
 				>
 					{/* Main Content */}
-					<main className="flex-1 flex flex-col min-h-0 px-4 sm:px-6 lg:px-8 py-4 lg:py-6 overflow-y-auto">
+					<main className="flex-1 flex flex-col min-h-0 px-[46px] py-6 overflow-y-auto">
 						{children}
 					</main>
 				</div>

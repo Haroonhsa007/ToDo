@@ -33,7 +33,7 @@ export function Header({ onSidebarToggle }) {
   }, [currentDateTime]);
 
   return (
-    <header className="bg-white px-4 sm:px-6 lg:px-8 py-3 lg:py-5 sticky top-0 z-30 border-b border-[#E5E5E5]">
+    <header className="bg-[#F8F8F8] px-4 sm:px-6 lg:px-8 py-3 lg:py-5 sticky top-0 z-30 shadow-[0px_4px_12px_0px_rgba(0,0,0,0.07)]">
       <div className="flex items-center justify-between gap-4">
         {/* Left - Logo/Title */}
         <div className="shrink-0 flex items-center gap-2">
@@ -46,12 +46,12 @@ export function Header({ onSidebarToggle }) {
           </button>
           
           {isDashboard ? (
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+            <h1 className="text-xl sm:text-2xl lg:text-[32px] font-semibold">
               <span className="text-[#FF6767]">Dash</span>
               <span className="text-[#000000]">board</span>
             </h1>
           ) : (
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+            <h1 className="text-xl sm:text-2xl lg:text-[32px] font-semibold">
               <span className="text-[#FF6767]">To</span>
               <span className="text-[#000000]">-Do</span>
             </h1>
@@ -64,9 +64,9 @@ export function Header({ onSidebarToggle }) {
             <input
               type="text"
               placeholder="Search your task here..."
-              className="w-full px-4 py-2.5 pr-12 rounded-xl bg-[#F5F5F5] border border-[#E5E5E5] outline-none text-sm text-[#000000] placeholder-[#A1A3AB] focus:border-[#A1A3AB] transition-colors"
+              className="w-full px-4 py-2.5 pr-12 rounded-lg bg-[#F5F8FF] border-none outline-none text-xs text-[#000000] placeholder-[#A1A3AB] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.04)]"
             />
-            <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#3ABEFF] rounded-lg flex items-center justify-center hover:bg-[#2EA8E6] transition-colors">
+            <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#FF6767] rounded-lg flex items-center justify-center hover:bg-[#E55A5A] transition-colors">
               <MdSearch className="text-white text-xl" />
             </button>
           </div>
@@ -77,7 +77,7 @@ export function Header({ onSidebarToggle }) {
           {/* Notifications */}
           <button
             onClick={() => navigate('/notifications')}
-            className="w-9 h-9 sm:w-10 sm:h-10 bg-[#3ABEFF] rounded-lg flex items-center justify-center hover:bg-[#2EA8E6] transition-colors"
+            className="w-9 h-9 sm:w-[34px] sm:h-[34px] bg-[#FF6767] rounded-lg flex items-center justify-center hover:bg-[#E55A5A] transition-colors"
           >
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
@@ -87,7 +87,7 @@ export function Header({ onSidebarToggle }) {
           {/* Calendar */}
           <button
             onClick={() => navigate('/calendar')}
-            className="w-9 h-9 sm:w-10 sm:h-10 bg-[#3ABEFF] rounded-lg flex items-center justify-center hover:bg-[#2EA8E6] transition-colors"
+            className="w-9 h-9 sm:w-[34px] sm:h-[34px] bg-[#FF6767] rounded-lg flex items-center justify-center hover:bg-[#E55A5A] transition-colors"
           >
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -96,7 +96,7 @@ export function Header({ onSidebarToggle }) {
 
           {/* Date Display - Desktop only */}
           <div className="hidden lg:flex flex-col items-end ml-2">
-            <span className="text-[#000000] text-sm font-medium">{dateTime.day}</span>
+            <span className="text-[#000000] text-[15px] font-medium">{dateTime.day}</span>
             <span className="text-[#3ABEFF] text-sm font-medium">{dateTime.date}</span>
           </div>
         </div>
@@ -108,9 +108,9 @@ export function Header({ onSidebarToggle }) {
           <input
             type="text"
             placeholder="Search your task here..."
-            className="w-full px-4 py-2.5 pr-12 rounded-xl bg-[#F5F5F5] border border-[#E5E5E5] outline-none text-sm text-[#000000] placeholder-[#A1A3AB] focus:border-[#A1A3AB] transition-colors"
+            className="w-full px-4 py-2.5 pr-12 rounded-lg bg-[#F5F8FF] border-none outline-none text-xs text-[#000000] placeholder-[#A1A3AB] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.04)]"
           />
-          <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#3ABEFF] rounded-lg flex items-center justify-center hover:bg-[#2EA8E6] transition-colors">
+          <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#FF6767] rounded-lg flex items-center justify-center hover:bg-[#E55A5A] transition-colors">
             <MdSearch className="text-white text-xl" />
           </button>
         </div>
