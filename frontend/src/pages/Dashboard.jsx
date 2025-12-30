@@ -1,10 +1,23 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdAdd, MdAccessTime, MdPeople } from 'react-icons/md';
+import { MdAdd } from 'react-icons/md';
 import { TaskCard, CompletedTaskCard } from '../components/features/TaskCard';
 import { TaskStatusChart } from '../components/features/TaskStatusChart';
+import { todoAPI } from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
+import { useAPI } from '../hooks/useAPI';
 
 export function Dashboard() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { loading, execute } = useAPI();
+  const [tasks, setTasks] = useState([]);
+  const [completedTasks, setCompletedTasks] = useState([]);
+  const [statistics, setStatistics] = useState({
+    completed_percentage: 0,
+    in_progress_percentage: 0,
+    not_started_percentage: 0,
+  });
 
   // Format date as "20 June • Today"
   const formatDate = () => {
@@ -16,51 +29,58 @@ export function Dashboard() {
     return `${day} ${month} • Today`;
   };
 
-  // Sample tasks data
-  const tasks = [
-    {
-      title: "Attend Nischal's Birthday Party",
-      description:
-        "Buy gifts on the way and pick up cake from the bakery. (6 PM | Fresh Elements).....",
-      priority: 'Moderate',
-      status: 'Not Started',
-      image: 'https://images.unsplash.com/photo-1464347744102-11db6282f854?w=200',
-      createdAt: '20/06/2023',
-    },
-    {
-      title: 'Landing Page Design for TravelDays',
-      description:
-        'Get the work done by EOD and discuss with client before leaving. (4 PM | Meeting Room)',
-      priority: 'Moderate',
-      status: 'In Progress',
-      image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=200',
-      createdAt: '20/06/2023',
-    },
-    {
-      title: 'Presentation on Final Product',
-      description:
-        'Make sure everything is functioning and all the necessities are properly met. Prepare the team and get the documents ready for...',
-      priority: 'Moderate',
-      status: 'In Progress',
-      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=200',
-      createdAt: '19/06/2023',
-    },
-  ];
+  // Format date for display
+  const formatTaskDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
-  const completedTasks = [
-    {
-      title: 'Walk the dog',
-      description: 'Take the dog to the park and bring treats as well.',
-      image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=200',
-      completedAt: 'Completed 2 days ago.',
-    },
-    {
-      title: 'Conduct meeting',
-      description: 'Meet with the client and finalize requirements.',
-      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=200',
-      completedAt: 'Completed 2 days ago.',
-    },
-  ];
+  // Fetch tasks and statistics
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      // Fetch all tasks (excluding completed)
+      const allTasksData = await execute(() => todoAPI.getAll());
+      let allTasks = [];
+      if (allTasksData?.results) {
+        allTasks = allTasksData.results;
+      } else if (Array.isArray(allTasksData)) {
+        allTasks = allTasksData;
+      }
+      
+      // Filter non-completed tasks
+      setTasks(allTasks.filter(task => task.status !== 'Completed'));
+
+      // Fetch completed tasks
+      const completedData = await execute(() => todoAPI.getAll({ status: 'Completed' }));
+      if (completedData?.results) {
+        setCompletedTasks(completedData.results.slice(0, 2)); // Show only 2 completed tasks
+      } else if (Array.isArray(completedData)) {
+        setCompletedTasks(completedData.slice(0, 2));
+      }
+
+      // Fetch statistics
+      const stats = await execute(() => todoAPI.getStatistics());
+      if (stats) {
+        setStatistics({
+          completed_percentage: stats.completed_percentage || 0,
+          in_progress_percentage: stats.in_progress_percentage || 0,
+          not_started_percentage: stats.not_started_percentage || 0,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    }
+  };
+
+  const userName = user?.name || user?.username || 'User';
 
   return (
     <div className="w-full h-full flex flex-col min-h-0">
@@ -69,39 +89,19 @@ export function Dashboard() {
         {/* Left Column - Welcome Message */}
         <div className="flex items-center gap-2">
           <h1 className="text-2xl sm:text-3xl lg:text-[36px] font-medium text-[#000000] leading-[34px]">
-            Welcome back, Sundar
+            Welcome back, {userName.split(' ')[0]}
           </h1>
           <span className="text-2xl sm:text-3xl lg:text-[36px]">👋</span>
         </div>
 
-        {/* Right Column - Team Members and Invite Button */}
+        {/* Right Column - Add Task Button */}
         <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
-          <div className="flex -space-x-2">
-            {[
-              { img: "https://images.unsplash.com/photo-1464347744102-11db6282f854?w=200", name: "Member 1" },
-              { img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=200", name: "Member 2" },
-              { img: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=200", name: "Member 3" },
-              { img: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=200", name: "Member 4" },
-              { img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=200", name: "Member 5" },
-            ].map((member, idx) => (
-              <div
-                key={member.img}
-                className="w-[36.276px] h-[36.276px] rounded-lg overflow-hidden shadow-sm bg-[#D9D9D9] relative border border-[#A1A3AB]"
-                style={{ zIndex: 10 - idx }}
-              >
-                <img src={member.img} alt={member.name} className="w-full h-full object-cover" />
-                {idx === 4 && (
-                  <div className="absolute inset-0 bg-black/52 flex items-center justify-center">
-                    <span className="text-white text-sm font-medium">+4</span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <button className="px-4 py-2 border-2 border-[#FF6767] text-[#FF6767] bg-white rounded-lg font-medium flex items-center gap-1 text-sm hover:bg-[#FFF5F5] transition-colors">
-            <MdPeople size={16} className="text-[#FF6767]" />
-            <span>Invite</span>
+          <button
+            onClick={() => navigate('/add-task')}
+            className="px-4 py-2 border-2 border-[#FF6767] text-[#FF6767] bg-white rounded-lg font-medium flex items-center gap-1 text-sm hover:bg-[#FFF5F5] transition-colors"
+          >
+            <MdAdd size={16} className="text-[#FF6767]" />
+            <span>Add Task</span>
           </button>
         </div>
       </div>
@@ -136,9 +136,24 @@ export function Dashboard() {
               </div>
 
               <div className="space-y-4 overflow-y-auto flex-1 min-h-0">
-                {tasks.map((task, index) => (
-                  <TaskCard key={index} {...task} />
-                ))}
+                {loading ? (
+                  <div className="text-center text-[#A1A3AB] py-8">Loading tasks...</div>
+                ) : tasks.length === 0 ? (
+                  <div className="text-center text-[#A1A3AB] py-8">No tasks yet. Add your first task!</div>
+                ) : (
+                  tasks.map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      id={task.id}
+                      title={task.title}
+                      description={task.description}
+                      priority={task.priority}
+                      status={task.status}
+                      image={task.image_url}
+                      createdAt={formatTaskDate(task.created_at)}
+                    />
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -157,9 +172,21 @@ export function Dashboard() {
               </div>
 
               <div className="flex flex-row justify-around gap-2 w-full overflow-x-auto pb-1">
-                <TaskStatusChart percentage={84} label="Completed" color="completed" />
-                <TaskStatusChart percentage={46} label="In Progress" color="progress" />
-                <TaskStatusChart percentage={13} label="Not Started" color="not-started" />
+                <TaskStatusChart 
+                  percentage={Math.round(statistics.completed_percentage)} 
+                  label="Completed" 
+                  color="completed" 
+                />
+                <TaskStatusChart 
+                  percentage={Math.round(statistics.in_progress_percentage)} 
+                  label="In Progress" 
+                  color="progress" 
+                />
+                <TaskStatusChart 
+                  percentage={Math.round(statistics.not_started_percentage)} 
+                  label="Not Started" 
+                  color="not-started" 
+                />
               </div>
             </div>
 
@@ -175,9 +202,21 @@ export function Dashboard() {
               </div>
 
               <div className="space-y-4 overflow-y-auto flex-1 min-h-0">
-                {completedTasks.slice(0, 2).map((task, index) => (
-                  <CompletedTaskCard key={index} {...task} />
-                ))}
+                {loading ? (
+                  <div className="text-center text-[#A1A3AB] py-8">Loading...</div>
+                ) : completedTasks.length === 0 ? (
+                  <div className="text-center text-[#A1A3AB] py-8">No completed tasks yet.</div>
+                ) : (
+                  completedTasks.map((task) => (
+                    <CompletedTaskCard
+                      key={task.id}
+                      title={task.title}
+                      description={task.description}
+                      image={task.image_url}
+                      completedAt={`Completed ${formatTaskDate(task.updated_at)}`}
+                    />
+                  ))
+                )}
               </div>
             </div>
           </div>

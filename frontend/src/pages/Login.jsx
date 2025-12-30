@@ -1,17 +1,34 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MdPerson, MdLock } from 'react-icons/md';
-import { FaFacebookF, FaGoogle } from 'react-icons/fa';
-import { FaXTwitter } from 'react-icons/fa6';
+import { useAuth } from '../contexts/AuthContext';
+import { useAPI } from '../hooks/useAPI';
+import toast from 'react-hot-toast';
 
-export function Login({ onLogin }) {
+export function Login() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const { loading, execute } = useAPI();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onLogin?.();
+
+    if (!username || !password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    const result = await execute(
+      () => login({ username, password }),
+      'Login successful!'
+    );
+
+    if (result?.success) {
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -46,7 +63,9 @@ export function Login({ onLogin }) {
                   placeholder="Enter Username"
                   value={username}
                   onChange={e => setUsername(e.target.value)}
+                  disabled={loading}
                   className="w-full pl-14 pr-4 py-4 border-2 border-neutral-border rounded-xl focus:outline-none focus:border-primary transition-colors text-neutral-text"
+                  required
                 />
               </div>
             </div>
@@ -62,7 +81,9 @@ export function Login({ onLogin }) {
                   placeholder="Enter Password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
+                  disabled={loading}
                   className="w-full pl-14 pr-4 py-4 border-2 border-neutral-border rounded-xl focus:outline-none focus:border-primary transition-colors text-neutral-text"
+                  required
                 />
               </div>
             </div>
@@ -84,9 +105,10 @@ export function Login({ onLogin }) {
             {/* Login Button */}
             <button
               type="submit"
-              className="text-white w-full bg-primary bg-[#ff6969] hover:bg-[#ff4d4d] hover:shadow-xl font-semibold py-4 rounded-xl transition-colors shadow-lg shadow-primary/30"
+              disabled={loading}
+              className="text-white w-full bg-primary bg-[#ff6969] hover:bg-[#ff4d4d] hover:shadow-xl font-semibold py-4 rounded-xl transition-colors shadow-lg shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Login
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
 

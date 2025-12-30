@@ -1,32 +1,24 @@
-# from django.urls import path
-# from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
+from django.urls import path
+from rest_framework_simplejwt.views import TokenVerifyView
 
-# from .view import (
-#     CompanyUserCreateView,
-#     CompanyWithAdminCreateView,
-#     LoginView,
-#     MeView,
-# )
+from .view import (
+    LoginView,
+    RegisterView,
+    RefreshTokenView,
+    MeView,
+    UpdateProfileView,
+    ChangePasswordView,
+)
 
-
-# urlpatterns = [
-#     # JWT auth endpoints (login / refresh / verify)
-#     path("login/", LoginView.as_view(), name="login"),
-#     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-#     path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
-
-#     # Registration & role-based user creation
-#     path(
-#         "companies/",
-#         CompanyWithAdminCreateView.as_view(),
-#         name="company_with_admin_create",
-#     ),
-#     path(
-#         "company-users/",
-#         CompanyUserCreateView.as_view(),
-#         name="company_user_create",
-#     ),
-
-#     # Simple protected endpoint to test JWT auth
-#     path("me/", MeView.as_view(), name="me"),
-# ]
+urlpatterns = [
+    # Authentication endpoints
+    path("auth/login/", LoginView.as_view(), name="login"),
+    path("auth/register/", RegisterView.as_view(), name="register"),
+    path("auth/refresh/", RefreshTokenView.as_view(), name="token_refresh"),
+    path("auth/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    
+    # User endpoints
+    path("users/me/", MeView.as_view(), name="me"),
+    path("users/profile/", UpdateProfileView.as_view(), name="update_profile"),
+    path("users/change-password/", ChangePasswordView.as_view(), name="change_password"),
+]

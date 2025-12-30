@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Layout } from './components/layout/Layout';
 import { Dashboard } from './pages/Dashboard';
 import { Login } from './pages/Login';
@@ -20,26 +20,25 @@ import { Settings } from './pages/Settings';
 import { Help } from './pages/Help';
 
 // Protected Route Component
-function ProtectedRoute({ children, isAuthenticated }) {
+function ProtectedRoute({ children }) {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
   return children;
 }
 
-function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const navigate = useNavigate();
-
-  const handleLogin = () => {
-    setIsAuthenticated(true);
-    navigate('/dashboard');
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    navigate('/login');
-  };
+function AppRoutes() {
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <>
@@ -76,7 +75,7 @@ function App() {
             isAuthenticated ? (
               <Navigate to="/dashboard" replace />
             ) : (
-              <Login onLogin={handleLogin} />
+              <Login />
             )
           }
         />
@@ -86,7 +85,7 @@ function App() {
             isAuthenticated ? (
               <Navigate to="/dashboard" replace />
             ) : (
-              <Register onRegister={handleLogin} />
+              <Register />
             )
           }
         />
@@ -95,8 +94,8 @@ function App() {
         <Route
           path="/*"
           element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Layout onLogout={handleLogout}>
+            <ProtectedRoute>
+              <Layout onLogout={logout}>
                 <Routes>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/my-task" element={<MyTask />} />
@@ -121,6 +120,14 @@ function App() {
         />
       </Routes>
     </>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
   );
 }
 

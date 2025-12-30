@@ -1,18 +1,24 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdCalendarToday } from 'react-icons/md';
+import { todoAPI } from '../services/api';
+import { useAPI } from '../hooks/useAPI';
+import toast from 'react-hot-toast';
 
 export function AddTask() {
   const navigate = useNavigate();
+  const { loading, execute } = useAPI();
   const fileInputRef = useRef(null);
   const dateInputRef = useRef(null);
   
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    priority: '',
+    priority: 'Moderate',
+    status: 'Not Started',
     dueDate: '',
     image: null,
+    imageFile: null,
   });
 
   const [dragActive, setDragActive] = useState(false);
@@ -28,7 +34,7 @@ export function AddTask() {
   const handlePriorityChange = (priority) => {
     setFormData({
       ...formData,
-      priority: formData.priority === priority ? '' : priority,
+      priority: formData.priority === priority ? 'Moderate' : priority,
     });
   };
 
@@ -60,21 +66,55 @@ export function AddTask() {
 
   const handleFile = (file) => {
     if (file.type.startsWith('image/')) {
+      // Store the file for upload
+      setFormData({
+        ...formData,
+        imageFile: file,
+      });
+
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
-        setFormData({
-          ...formData,
-          image: reader.result,
-        });
       };
       reader.readAsDataURL(file);
+    } else {
+      toast.error('Please select an image file');
     }
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate(-1);
+
+    if (!formData.title || !formData.description) {
+      toast.error('Please fill in title and description');
+      return;
+    }
+
+    try {
+      const taskData = {
+        title: formData.title,
+        description: formData.description,
+        priority: formData.priority,
+        status: formData.status,
+        image: formData.imageFile,
+      };
+
+      if (formData.dueDate) {
+        // Convert date to ISO format
+        const date = new Date(formData.dueDate);
+        taskData.due_date = date.toISOString();
+      }
+
+      await execute(
+        () => todoAPI.create(taskData),
+        'Task created successfully!'
+      );
+
+      navigate(-1);
+    } catch (error) {
+      console.error('Error creating task:', error);
+    }
   };
 
   // Custom image upload icon matching the design
@@ -121,14 +161,16 @@ export function AddTask() {
             {/* Title */}
             <div className="mb-5">
               <label className="block text-sm font-medium text-black mb-2">
-                Title
+                Title *
               </label>
               <input
                 type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
+                disabled={loading}
                 className="w-full max-w-[420px] h-11 px-4 rounded-md bg-white border border-gray-200 focus:outline-none focus:border-gray-400 transition-colors text-black text-sm"
+                required
               />
             </div>
 
@@ -144,6 +186,7 @@ export function AddTask() {
                   name="dueDate"
                   value={formData.dueDate}
                   onChange={handleChange}
+                  disabled={loading}
                   className="w-full h-11 px-4 pr-10 rounded-md bg-white border border-gray-200 focus:outline-none focus:border-gray-400 transition-colors text-black text-sm [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-10 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                 />
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
@@ -163,22 +206,26 @@ export function AddTask() {
                   <span className="w-2 h-2 rounded-full bg-[#F21E1E]"></span>
                   <span className="text-sm text-gray-600">Extreme</span>
                   <input
-                    type="checkbox"
+                    type="radio"
+                    name="priority"
                     checked={formData.priority === 'Extreme'}
                     onChange={() => handlePriorityChange('Extreme')}
+                    disabled={loading}
                     className="w-4 h-4 border border-gray-300 rounded-sm cursor-pointer accent-[#F21E1E]"
                   />
                 </label>
 
                 {/* Moderate */}
                 <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <span className="w-2 h-2 rounded-full bg-[#0225FF]"></span>
+                  <span className="w-2 h-2 rounded-full bg-[#42ADE2]"></span>
                   <span className="text-sm text-gray-600">Moderate</span>
                   <input
-                    type="checkbox"
+                    type="radio"
+                    name="priority"
                     checked={formData.priority === 'Moderate'}
                     onChange={() => handlePriorityChange('Moderate')}
-                    className="w-4 h-4 border border-gray-300 rounded-sm cursor-pointer accent-[#0225FF]"
+                    disabled={loading}
+                    className="w-4 h-4 border border-gray-300 rounded-sm cursor-pointer accent-[#42ADE2]"
                   />
                 </label>
 
@@ -187,9 +234,11 @@ export function AddTask() {
                   <span className="w-2 h-2 rounded-full bg-[#05A301]"></span>
                   <span className="text-sm text-gray-600">Low</span>
                   <input
-                    type="checkbox"
+                    type="radio"
+                    name="priority"
                     checked={formData.priority === 'Low'}
                     onChange={() => handlePriorityChange('Low')}
+                    disabled={loading}
                     className="w-4 h-4 border border-gray-300 rounded-sm cursor-pointer accent-[#05A301]"
                   />
                 </label>
@@ -201,14 +250,16 @@ export function AddTask() {
               {/* Task Description */}
               <div className="flex-1">
                 <label className="block text-sm font-medium text-black mb-2">
-                  Task Description
+                  Task Description *
                 </label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   placeholder="Start writing here...."
+                  disabled={loading}
                   className="w-full h-[200px] px-4 py-3 rounded-md bg-white border border-gray-200 focus:outline-none focus:border-gray-400 transition-colors text-black text-sm placeholder:text-gray-400 resize-none"
+                  required
                 />
               </div>
 
@@ -239,7 +290,7 @@ export function AddTask() {
                         type="button"
                         onClick={() => {
                           setPreviewImage(null);
-                          setFormData({ ...formData, image: null });
+                          setFormData({ ...formData, imageFile: null });
                           if (fileInputRef.current) {
                             fileInputRef.current.value = '';
                           }
@@ -263,7 +314,8 @@ export function AddTask() {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-4 py-1.5 border border-gray-300 rounded text-xs text-gray-600 hover:bg-gray-50 transition-colors"
+                        disabled={loading}
+                        className="px-4 py-1.5 border border-gray-300 rounded text-xs text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50"
                       >
                         Browse
                       </button>
@@ -285,9 +337,10 @@ export function AddTask() {
           <div className="mt-6">
             <button
               type="submit"
-              className="px-8 py-2.5 bg-[#FF6767] hover:bg-[#E55A5A] text-white rounded-full text-sm font-medium transition-colors"
+              disabled={loading}
+              className="px-8 py-2.5 bg-[#FF6767] hover:bg-[#E55A5A] text-white rounded-full text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Done
+              {loading ? 'Creating...' : 'Done'}
             </button>
           </div>
         </form>

@@ -1,9 +1,13 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaFacebookF, FaGoogle } from 'react-icons/fa';
-import { FaXTwitter } from 'react-icons/fa6';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useAPI } from '../hooks/useAPI';
+import toast from 'react-hot-toast';
 
-export function Register({ onRegister }) {
+export function Register() {
+  const navigate = useNavigate();
+  const { register } = useAuth();
+  const { loading, execute } = useAPI();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -14,9 +18,38 @@ export function Register({ onRegister }) {
   });
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onRegister?.();
+
+    // Validation
+    if (!formData.username || !formData.email || !formData.password) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      toast.error('Password must be at least 8 characters long');
+      return;
+    }
+
+    if (!rememberMe) {
+      toast.error('Please agree to the Terms and Conditions');
+      return;
+    }
+
+    const result = await execute(
+      () => register(formData),
+      'Registration successful!'
+    );
+
+    if (result?.success) {
+      navigate('/dashboard');
+    }
   };
 
   const handleChange = e => {
@@ -44,7 +77,6 @@ export function Register({ onRegister }) {
 
         {/* Left Side - Illustration */}
         <div className="bg-gradient-to-br from-primary/10 via-secondary-blue/10 to-secondary-purple/10 p-12 relative hidden md:flex">
-          {/* The illustration is absolutely positioned to the bottom left corner */}
           <div className="absolute left-0 bottom-0 w-full flex justify-start items-end">
             <img
               src="/site_svgs/register-page/register.svg"
@@ -76,6 +108,7 @@ export function Register({ onRegister }) {
                   placeholder="Enter First Name"
                   value={formData.firstName}
                   onChange={handleChange}
+                  disabled={loading}
                   className="w-full pl-14 pr-4 py-4 border-2 border-neutral-border rounded-xl focus:outline-none focus:border-primary transition-colors text-neutral-text"
                 />
               </div>
@@ -98,6 +131,7 @@ export function Register({ onRegister }) {
                   placeholder="Enter Last Name"
                   value={formData.lastName}
                   onChange={handleChange}
+                  disabled={loading}
                   className="w-full pl-14 pr-4 py-4 border-2 border-neutral-border rounded-xl focus:outline-none focus:border-primary transition-colors text-neutral-text"
                 />
               </div>
@@ -120,7 +154,9 @@ export function Register({ onRegister }) {
                   placeholder="Enter Username"
                   value={formData.username}
                   onChange={handleChange}
+                  disabled={loading}
                   className="w-full pl-14 pr-4 py-4 border-2 border-neutral-border rounded-xl focus:outline-none focus:border-primary transition-colors text-neutral-text"
+                  required
                 />
               </div>
             </div>
@@ -142,7 +178,9 @@ export function Register({ onRegister }) {
                   placeholder="Enter Email"
                   value={formData.email}
                   onChange={handleChange}
+                  disabled={loading}
                   className="w-full pl-14 pr-4 py-4 border-2 border-neutral-border rounded-xl focus:outline-none focus:border-primary transition-colors text-neutral-text"
+                  required
                 />
               </div>
             </div>
@@ -164,7 +202,10 @@ export function Register({ onRegister }) {
                   placeholder="Enter Password"
                   value={formData.password}
                   onChange={handleChange}
+                  disabled={loading}
                   className="w-full pl-14 pr-4 py-4 border-2 border-neutral-border rounded-xl focus:outline-none focus:border-primary transition-colors text-neutral-text"
+                  required
+                  minLength={8}
                 />
               </div>
             </div>
@@ -186,7 +227,10 @@ export function Register({ onRegister }) {
                   placeholder="Confirm Password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
+                  disabled={loading}
                   className="w-full pl-14 pr-4 py-4 border-2 border-neutral-border rounded-xl focus:outline-none focus:border-primary transition-colors text-neutral-text"
+                  required
+                  minLength={8}
                 />
               </div>
             </div>
@@ -208,27 +252,12 @@ export function Register({ onRegister }) {
             {/* Register Button */}
             <button
               type="submit"
-              className="text-white w-full bg-primary bg-[#ff6969] hover:bg-[#ff4d4d] hover:shadow-xl font-semibold py-4 rounded-xl transition-colors shadow-lg shadow-primary/30"
+              disabled={loading}
+              className="text-white w-full bg-primary bg-[#ff6969] hover:bg-[#ff4d4d] hover:shadow-xl font-semibold py-4 rounded-xl transition-colors shadow-lg shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Register
+              {loading ? 'Registering...' : 'Register'}
             </button>
           </form>
-
-          {/* Social Register */}
-          {/* <div className="mt-2">
-            <p className="text-neutral-text-light mb-4">Or, Register with</p>
-            <div className="flex gap-4">
-              <button className="flex-1 p-3 border-2 border-neutral-border rounded-xl hover:bg-neutral-bg transition-colors flex items-center justify-center">
-                <FaFacebookF className="text-blue-600" size={24} />
-              </button>
-              <button className="flex-1 p-3 border-2 border-neutral-border rounded-xl hover:bg-neutral-bg transition-colors flex items-center justify-center">
-                <FaGoogle className="text-red-500" size={24} />
-              </button>
-              <button className="flex-1 p-3 border-2 border-neutral-border rounded-xl hover:bg-neutral-bg transition-colors flex items-center justify-center">
-                <FaXTwitter className="text-neutral-text" size={24} />
-              </button>
-            </div>
-          </div> */}
 
           {/* Login Link */}
           <p className="text-neutral-text-light mt-6">
@@ -242,9 +271,7 @@ export function Register({ onRegister }) {
           </p>
         </div>
 
-
       </div>
     </div>
   );
 }
-
