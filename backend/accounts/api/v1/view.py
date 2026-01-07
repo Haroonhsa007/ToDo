@@ -28,9 +28,9 @@ class LoginView(TokenObtainPairView):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             user = serializer.user
-            
+
             # Add user data to response
-            response.data['user'] = UserSerializer(user).data
+            response.data['user'] = UserSerializer(user, context={'request': request}).data
         return response
 
 
@@ -46,15 +46,15 @@ class RegisterView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        
+
         # Generate tokens
         refresh = RefreshToken.for_user(user)
-        
+
         return Response(
             {
                 'access': str(refresh.access_token),
                 'refresh': str(refresh),
-                'user': UserSerializer(user).data,
+                'user': UserSerializer(user, context={'request': request}).data,
             },
             status=status.HTTP_201_CREATED,
         )
@@ -73,12 +73,12 @@ class MeView(APIView):
     Get current user profile.
     Requires authentication.
     """
-    
+
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, *args, **kwargs):
         user = User.objects.get(pk=request.user.pk)
-        return Response(UserSerializer(user).data)
+        return Response(UserSerializer(user, context={'request': request}).data)
 
 
 class UpdateProfileView(APIView):
@@ -86,12 +86,12 @@ class UpdateProfileView(APIView):
     Update user profile.
     Requires authentication.
     """
-    
+
     permission_classes = [IsAuthenticated]
-    
+
     def put(self, request, *args, **kwargs):
         user = request.user
-        serializer = UserSerializer(user, data=request.data, partial=True)
+        serializer = UserSerializer(user, data=request.data, partial=True, context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)

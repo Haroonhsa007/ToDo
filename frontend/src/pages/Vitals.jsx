@@ -1,42 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdDelete, MdEdit, MdMoreHoriz } from 'react-icons/md';
+import { MdDelete, MdEdit, MdMoreHoriz, MdAdd } from 'react-icons/md';
+import { todoAPI } from '../services/api';
+import { useAPI } from '../hooks/useAPI';
 
 export function Vitals() {
   const navigate = useNavigate();
+  const { loading, execute } = useAPI();
   const [selectedTask, setSelectedTask] = useState(0);
+  const [tasks, setTasks] = useState([]);
 
-  const tasks = [
-    {
-      id: 1,
-      title: 'Walk the dog',
-      description: 'Take the dog to the park and bring treats as well.....',
-      priority: 'Extreme',
-      status: 'Not Started',
-      createdAt: '20/06/2023',
-      image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=200',
-      fullDescription: `Take the dog to the park and bring treats as well.
+  // Fetch all tasks on mount (vital tasks include all priorities)
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
-Take Luffy and Jiro for a leisurely stroll around the neighborhood. Enjoy the fresh air and give them the exercise and mental stimulation they need for a happy and healthy day. Don't forget to bring along squeaky and fluffy for some extra fun along the way!
+  const fetchTasks = async () => {
+    const data = await execute(() => todoAPI.getAll());
+    const taskList = data?.results || data || [];
+    setTasks(taskList);
+    // Reset selected task if list changes
+    if (taskList.length > 0 && selectedTask >= taskList.length) {
+      setSelectedTask(0);
+    }
+  };
 
-1. Listen to a podcast or audiobook
-2. Practice mindfulness or meditation
-3. Take photos of interesting sights along the way
-4. Practice obedience training with your dog
-5. Chat with neighbors or other dog walkers
-6. Listen to music or an upbeat playlist`,
-    },
-    {
-      id: 2,
-      title: 'Take grandma to hospital',
-      description: 'Go back home and take grandma to the hosp....',
-      priority: 'Moderate',
-      status: 'In Progress',
-      createdAt: '20/06/2023',
-      image: 'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?w=200',
-      fullDescription: 'Go back home and take grandma to the hospital for her regular checkup.',
-    },
-  ];
+  // Handle delete task
+  const handleDelete = async (taskId) => {
+    if (!confirm('Are you sure you want to delete this task?')) return;
+
+    await execute(() => todoAPI.delete(taskId), 'Task deleted successfully!');
+    fetchTasks(); // Refresh list
+  };
 
   // Exact colors from design
   const priorityColors = {
@@ -51,7 +46,43 @@ Take Luffy and Jiro for a leisurely stroll around the neighborhood. Enjoy the fr
     'Completed': '#05A301',
   };
 
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   const currentTask = tasks[selectedTask];
+
+  // Show loading or empty state
+  if (loading && tasks.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p className="text-gray-500">Loading vital tasks...</p>
+      </div>
+    );
+  }
+
+  if (tasks.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-500 mb-4">No tasks found. Create your first task!</p>
+          <button
+            onClick={() => navigate('/add-task')}
+            className="px-6 py-2.5 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-2"
+          >
+            <MdAdd size={20} />
+            Add Task
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -60,10 +91,19 @@ Take Luffy and Jiro for a leisurely stroll around the neighborhood. Enjoy the fr
         {/* Left Panel - Task List */}
         <div className="w-full lg:w-[340px] xl:w-[380px] shrink-0 flex flex-col min-h-0">
           <div className="bg-white rounded-xl lg:rounded-2xl border border-[#D3D3D3] p-4 lg:p-6 flex flex-col flex-1 min-h-0">
-            {/* Header with underline */}
-            <h2 className="text-base lg:text-xl font-bold text-[#000000] border-b-2 border-[#FF6767] pb-1 mb-4 lg:mb-6 inline-block self-start">
-              Vital Tasks
-            </h2>
+            {/* Header with Add Task button */}
+            <div className="flex items-center justify-between mb-4 lg:mb-6 shrink-0">
+              <h2 className="text-base lg:text-xl font-bold text-[#000000] border-b-2 border-[#FF6767] pb-1">
+                Vital Tasks
+              </h2>
+              <button
+                onClick={() => navigate('/add-task')}
+                className="flex items-center gap-1 text-[#FF6767] hover:text-[#F24E1E] transition-colors"
+              >
+                <MdAdd size={18} />
+                <span className="text-xs font-medium">Add Task</span>
+              </button>
+            </div>
 
             {/* Task List */}
             <div className="space-y-3 lg:space-y-4 overflow-y-auto flex-1 min-h-0 pr-1">
@@ -98,11 +138,11 @@ Take Luffy and Jiro for a leisurely stroll around the neighborhood. Enjoy the fr
                         </button>
                       </div>
                       <p className="text-xs lg:text-sm text-[#747474] mb-2 line-clamp-2">{task.description}</p>
-                      
+
                       {/* Image */}
-                      {task.image && (
+                      {task.image_url && (
                         <div className="w-16 lg:w-20 h-12 lg:h-16 rounded-lg overflow-hidden mb-2">
-                          <img src={task.image} alt="" className="w-full h-full object-cover" />
+                          <img src={task.image_url} alt="" className="w-full h-full object-cover" />
                         </div>
                       )}
 
@@ -116,7 +156,7 @@ Take Luffy and Jiro for a leisurely stroll around the neighborhood. Enjoy the fr
                           <span className="text-[#A1A3AB]">Status: </span>
                           <span style={{ color: statusColors[task.status] }}>{task.status}</span>
                         </span>
-                        <span className="text-[#A1A3AB]">Created on: {task.createdAt}</span>
+                        <span className="text-[#A1A3AB]">Created on: {formatDate(task.created_at)}</span>
                       </div>
                     </div>
                   </div>
@@ -132,16 +172,16 @@ Take Luffy and Jiro for a leisurely stroll around the neighborhood. Enjoy the fr
             {/* Header section */}
             <div className="flex gap-4 lg:gap-6 mb-4 lg:mb-6">
               {/* Image */}
-              {currentTask.image && (
+              {currentTask.image_url && (
                 <div className="w-24 h-24 lg:w-[140px] lg:h-[120px] rounded-xl overflow-hidden shrink-0">
-                  <img 
-                    src={currentTask.image} 
+                  <img
+                    src={currentTask.image_url}
                     alt={currentTask.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
               )}
-              
+
               {/* Title and meta */}
               <div className="flex-1 min-w-0">
                 <h2 className="text-lg lg:text-xl font-bold text-[#000000] mb-2">{currentTask.title}</h2>
@@ -154,7 +194,7 @@ Take Luffy and Jiro for a leisurely stroll around the neighborhood. Enjoy the fr
                     <span className="text-[#000000]">Status: </span>
                     <span style={{ color: statusColors[currentTask.status] }}>{currentTask.status}</span>
                   </p>
-                  <p className="text-xs text-[#A1A3AB]">Created on: {currentTask.createdAt}</p>
+                  <p className="text-xs text-[#A1A3AB]">Created on: {formatDate(currentTask.created_at)}</p>
                 </div>
               </div>
             </div>
@@ -162,14 +202,14 @@ Take Luffy and Jiro for a leisurely stroll around the neighborhood. Enjoy the fr
             {/* Description */}
             <div className="flex-1 overflow-y-auto min-h-0 pb-16">
               <div className="text-xs lg:text-sm text-[#747474] leading-relaxed whitespace-pre-line">
-                {currentTask.fullDescription}
+                {currentTask.description}
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="absolute bottom-4 lg:bottom-6 right-4 lg:right-6 flex items-center gap-2 lg:gap-3">
               <button
-                onClick={() => {/* Handle delete */}}
+                onClick={() => handleDelete(currentTask.id)}
                 className="w-9 h-9 lg:w-10 lg:h-10 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg flex items-center justify-center transition-colors"
               >
                 <MdDelete size={20} />

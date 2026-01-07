@@ -1,12 +1,15 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from common.utils import get_image_url
 
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Public representation of the user used in API responses."""
-    
+
+    profile_picture_url = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = [
@@ -16,12 +19,24 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
+            "profile_picture",
+            "profile_picture_url",
             "is_active",
             "is_superuser",
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "is_active", "created_at", "updated_at"]
+        read_only_fields = ["id", "username", "is_active", "is_superuser", "created_at", "updated_at", "profile_picture_url"]
+        extra_kwargs = {
+            'profile_picture': {'required': False, 'allow_null': True}
+        }
+
+    def get_profile_picture_url(self, obj):
+        """Get full URL for profile picture."""
+        request = self.context.get('request')
+        if obj.profile_picture and request:
+            return get_image_url(request, obj.profile_picture)
+        return None
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):

@@ -1,9 +1,12 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MdDelete, MdEdit, MdPriorityHigh } from 'react-icons/md';
+import { todoAPI } from '../services/api';
+import { useAPI } from '../hooks/useAPI';
 
 export function ViewTask() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { loading, execute } = useAPI();
   const task = location.state?.task;
   
   const taskData = task || {
@@ -35,6 +38,22 @@ Optional:
     'Not Started': '#F21E1E',
     'In Progress': '#0225FF',
     'Completed': '#05A301',
+  };
+
+  // Handle delete task
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete this task?')) return;
+
+    await execute(() => todoAPI.delete(taskData.id), 'Task deleted successfully!');
+    navigate(-1);
+  };
+
+  // Handle toggle priority (toggle between Extreme and Moderate)
+  const handleTogglePriority = async () => {
+    const newPriority = taskData.priority === 'Extreme' ? 'Moderate' : 'Extreme';
+    await execute(() => todoAPI.update(taskData.id, { priority: newPriority }), 'Priority updated!');
+    // Refresh page with updated task
+    navigate(0);
   };
 
   return (
@@ -94,7 +113,7 @@ Optional:
         {/* Action Buttons - bottom right */}
         <div className="absolute bottom-4 sm:bottom-6 lg:bottom-8 right-4 sm:right-6 lg:right-8 flex items-center gap-2 sm:gap-3">
           <button
-            onClick={() => {/* Handle delete */}}
+            onClick={handleDelete}
             className="w-10 h-10 lg:w-11 lg:h-11 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg flex items-center justify-center transition-colors"
           >
             <MdDelete size={22} />
@@ -106,8 +125,9 @@ Optional:
             <MdEdit size={22} />
           </button>
           <button
-            onClick={() => {/* Handle vital/priority */}}
+            onClick={handleTogglePriority}
             className="w-10 h-10 lg:w-11 lg:h-11 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg flex items-center justify-center transition-colors"
+            title="Toggle Priority"
           >
             <MdPriorityHigh size={22} />
           </button>

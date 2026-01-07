@@ -1,24 +1,47 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MdCalendarToday } from 'react-icons/md';
+import { todoAPI, categoryAPI } from '../services/api';
+import { useAPI } from '../hooks/useAPI';
 
 export function EditTask() {
   const navigate = useNavigate();
   const location = useLocation();
   const task = location.state?.task;
+  const { loading, execute } = useAPI();
   const fileInputRef = useRef(null);
   const dateInputRef = useRef(null);
-  
+
+  const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     title: task?.title || '',
     description: task?.description || '',
     priority: task?.priority || '',
-    dueDate: task?.dueDate || '',
-    image: task?.image || null,
+    status: task?.status || 'Not Started',
+    category: task?.category?.id || null,
+    dueDate: task?.due_date ? task.due_date.split('T')[0] : '',
+    imageFile: null,
   });
 
   const [dragActive, setDragActive] = useState(false);
-  const [previewImage, setPreviewImage] = useState(task?.image || null);
+  const [previewImage, setPreviewImage] = useState(task?.image_url || task?.image || null);
+
+  // Fetch categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const data = await execute(() => categoryAPI.getAll());
+      // Handle both array response and object with results
+      if (Array.isArray(data)) {
+        setCategories(data);
+      } else if (data?.results && Array.isArray(data.results)) {
+        setCategories(data.results);
+      } else {
+        setCategories([]);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleChange = e => {
     setFormData({
@@ -62,20 +85,61 @@ export function EditTask() {
 
   const handleFile = (file) => {
     if (file.type.startsWith('image/')) {
+      // Store the File object for upload
+      setFormData({
+        ...formData,
+        imageFile: file,
+      });
+
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
-        setFormData({
-          ...formData,
-          image: reader.result,
-        });
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate required fields
+    if (!formData.title.trim()) {
+      alert('Please enter a task title');
+      return;
+    }
+
+    // Prepare task data for API
+    const taskData = {
+      title: formData.title,
+      description: formData.description,
+      priority: formData.priority || 'Moderate',
+      status: formData.status,
+    };
+
+    // Add optional fields
+    if (formData.category) {
+      taskData.category = formData.category;
+    }
+
+    if (formData.dueDate) {
+      // Convert date to ISO format
+      const date = new Date(formData.dueDate);
+      taskData.due_date = date.toISOString();
+    }
+
+    // Add image if a new file was selected
+    if (formData.imageFile) {
+      taskData.image = formData.imageFile;
+    }
+
+    // Call API to update task
+    if (!task?.id) {
+      alert('Task ID is missing');
+      return;
+    }
+
+    await execute(() => todoAPI.update(task.id, taskData), 'Task updated successfully!');
     navigate(-1);
   };
 
@@ -212,6 +276,43 @@ export function EditTask() {
                   />
                 </label>
               </div>
+            </div>
+
+            {/* Status */}
+            <div className="mb-5">
+              <label className="block text-sm font-medium text-black mb-2">
+                Status
+              </label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="w-full max-w-[420px] h-11 px-4 rounded-md bg-white border border-gray-200 focus:outline-none focus:border-gray-400 transition-colors text-black text-sm"
+              >
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
+            {/* Category */}
+            <div className="mb-5">
+              <label className="block text-sm font-medium text-black mb-2">
+                Category
+              </label>
+              <select
+                name="category"
+                value={formData.category || ''}
+                onChange={handleChange}
+                className="w-full max-w-[420px] h-11 px-4 rounded-md bg-white border border-gray-200 focus:outline-none focus:border-gray-400 transition-colors text-black text-sm"
+              >
+                <option value="">No Category</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Task Description and Upload Image Row */}

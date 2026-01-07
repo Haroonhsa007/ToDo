@@ -110,7 +110,7 @@ function AppRoutes() {
                   <Route path="/add-task" element={<AddTask />} />
                   <Route path="/edit-task" element={<EditTask />} />
                   <Route path="/view-task" element={<ViewTask />} />
-                  <Route path="/create-category" element={<CreateCategories />} />
+                  <Route path="/create-categories" element={<CreateCategories />} />
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   <Route path="*" element={<Navigate to="/dashboard" replace />} />
                 </Routes>

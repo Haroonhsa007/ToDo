@@ -6,6 +6,7 @@ export function Header({ onSidebarToggle }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Check if we're on the dashboard
   const isDashboard = location.pathname === '/dashboard' || location.pathname === '/';
@@ -25,12 +26,26 @@ export function Header({ onSidebarToggle }) {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    
+
     return {
       day: dayName,
       date: `${day}/${month}/${year}`,
     };
   }, [currentDateTime]);
+
+  // Handle search
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/my-task?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  // Handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   return (
     <header className="bg-[#F8F8F8] px-4 sm:px-6 lg:px-8 py-3 lg:py-5 sticky top-0 z-30 shadow-[0px_4px_12px_0px_rgba(0,0,0,0.07)]">
@@ -64,9 +79,15 @@ export function Header({ onSidebarToggle }) {
             <input
               type="text"
               placeholder="Search your task here..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
               className="w-full px-4 py-2.5 pr-12 rounded-lg bg-[#F5F8FF] border-none outline-none text-xs text-[#000000] placeholder-[#A1A3AB] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.04)]"
             />
-            <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#FF6767] rounded-lg flex items-center justify-center hover:bg-[#E55A5A] transition-colors">
+            <button
+              onClick={handleSearch}
+              className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#FF6767] rounded-lg flex items-center justify-center hover:bg-[#E55A5A] transition-colors"
+            >
               <MdSearch className="text-white text-xl" />
             </button>
           </div>
@@ -108,9 +129,15 @@ export function Header({ onSidebarToggle }) {
           <input
             type="text"
             placeholder="Search your task here..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleKeyPress}
             className="w-full px-4 py-2.5 pr-12 rounded-lg bg-[#F5F8FF] border-none outline-none text-xs text-[#000000] placeholder-[#A1A3AB] shadow-[0px_4px_12px_0px_rgba(0,0,0,0.04)]"
           />
-          <button className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#FF6767] rounded-lg flex items-center justify-center hover:bg-[#E55A5A] transition-colors">
+          <button
+            onClick={handleSearch}
+            className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-[#FF6767] rounded-lg flex items-center justify-center hover:bg-[#E55A5A] transition-colors"
+          >
             <MdSearch className="text-white text-xl" />
           </button>
         </div>

@@ -9,6 +9,7 @@ import {
 } from 'react-icons/md';
 import { BsExclamationLg } from 'react-icons/bs';
 import { FaRegCheckSquare, FaListUl } from 'react-icons/fa';
+import { useAuth } from '../../contexts/AuthContext';
 
 const menuItems = [
   { icon: MdDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -20,6 +21,19 @@ const menuItems = [
 ];
 
 export function Sidebar({ onLogout, isCollapsed, onToggle }) {
+  const { user } = useAuth();
+
+  // Get user initials for avatar
+  const getUserInitials = () => {
+    if (user?.name) {
+      const names = user.name.split(' ');
+      if (names.length >= 2) {
+        return (names[0].charAt(0) + names[1].charAt(0)).toUpperCase();
+      }
+      return user.name.charAt(0).toUpperCase();
+    }
+    return user?.username?.charAt(0).toUpperCase() || 'U';
+  };
   return (
     <>
       {/* Mobile Overlay */}
@@ -61,22 +75,30 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
             ${isCollapsed ? 'px-2' : 'px-6'}
           `}
         >
-          {/* Profile Photo */}
-          <div className={`rounded-full overflow-hidden ${isCollapsed ? 'w-12 h-12' : 'w-[86px] h-[86px]'}`}>
-            <img
-              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200"
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
+          {/* Profile Photo - User Initials */}
+          <div
+            className={`rounded-full bg-white/20 flex items-center justify-center overflow-hidden ${isCollapsed ? 'w-12 h-12' : 'w-[86px] h-[86px]'}`}
+          >
+            {user?.profile_picture_url ? (
+              <img
+                src={user.profile_picture_url}
+                alt={user.name || user.username}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className={`text-white font-bold ${isCollapsed ? 'text-lg' : 'text-3xl'}`}>
+                {getUserInitials()}
+              </span>
+            )}
           </div>
 
           {!isCollapsed && (
             <>
-              <h3 className="mt-3 text-white font-semibold text-base leading-normal">
-                Sundar Gurung
+              <h3 className="mt-3 text-white font-semibold text-base leading-normal text-center">
+                {user?.name || user?.username || 'User'}
               </h3>
-              <p className="text-white text-xs leading-normal mt-1">
-                sundargurung360@gmail.com
+              <p className="text-white text-xs leading-normal mt-1 text-center break-all px-2">
+                {user?.email || ''}
               </p>
             </>
           )}

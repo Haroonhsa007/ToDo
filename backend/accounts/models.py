@@ -23,6 +23,7 @@ class User(AbstractUser, TimestampedModel):
 
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
     # Flags / status
     is_active = models.BooleanField(default=True)

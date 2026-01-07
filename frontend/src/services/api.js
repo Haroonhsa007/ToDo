@@ -43,7 +43,24 @@ export const userAPI = {
 
   // Update user profile
   updateProfile: async (userData) => {
-    const response = await axios.put('/users/profile/', userData);
+    const formData = new FormData();
+
+    // Add text fields
+    if (userData.first_name) formData.append('first_name', userData.first_name);
+    if (userData.last_name) formData.append('last_name', userData.last_name);
+    if (userData.email) formData.append('email', userData.email);
+    if (userData.name) formData.append('name', userData.name);
+
+    // Add profile picture if it's a File object
+    if (userData.profile_picture && userData.profile_picture instanceof File) {
+      formData.append('profile_picture', userData.profile_picture);
+    }
+
+    const response = await axios.put('/users/profile/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   },
 

@@ -1,44 +1,45 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { MdDelete, MdEdit, MdMoreHoriz } from 'react-icons/md';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { MdDelete, MdEdit, MdMoreHoriz, MdAdd, MdClose } from 'react-icons/md';
+import { todoAPI } from '../services/api';
+import { useAPI } from '../hooks/useAPI';
 
 export function MyTask() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { loading, execute } = useAPI();
   const [selectedTask, setSelectedTask] = useState(0);
+  const [tasks, setTasks] = useState([]);
 
-  const tasks = [
-    {
-      id: 1,
-      title: 'Submit Documents',
-      description: 'Make sure to submit all the necessary docum.....',
-      priority: 'Extreme',
-      status: 'Not Started',
-      createdAt: '20/06/2023',
-      image: 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=200',
-      fullDescription: `Task Title: Document Submission.
+  // Get search query from URL
+  const searchQuery = searchParams.get('search') || '';
 
-Objective: To submit required documents for something important
+  // Fetch tasks on mount and when search changes
+  useEffect(() => {
+    fetchTasks();
+  }, [searchQuery]);
 
-Task Description: Review the list of documents required for submission and ensure all necessary documents are ready. Organize the documents accordingly and scan them if physical copies need to be submitted digitally. Rename the scanned files appropriately for easy identification and verify the accepted file formats. Upload the documents securely to the designated platform, double-check for accuracy, and obtain confirmation of successful submission. Follow up if necessary to ensure proper processing.
+  const fetchTasks = async () => {
+    const filters = {};
+    if (searchQuery) {
+      filters.search = searchQuery;
+    }
+    const data = await execute(() => todoAPI.getAll(filters));
+    const taskList = data?.results || data || [];
+    setTasks(taskList);
+    // Reset selected task if list changes
+    if (taskList.length > 0 && selectedTask >= taskList.length) {
+      setSelectedTask(0);
+    }
+  };
 
-Additional Notes:
-• Ensure that the documents are authentic and up-to-date.
-• Maintain confidentiality and security of sensitive information during the submission process.
-• If there are specific guidelines or deadlines for submission, adhere to them diligently.
+  // Handle delete task
+  const handleDelete = async (taskId) => {
+    if (!confirm('Are you sure you want to delete this task?')) return;
 
-Deadline for Submission: End of Day`,
-    },
-    {
-      id: 2,
-      title: 'Complete assignments',
-      description: 'The assignments must be completed to pass final year....',
-      priority: 'Moderate',
-      status: 'In Progress',
-      createdAt: '20/06/2023',
-      image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=200',
-      fullDescription: 'Complete all pending assignments for final year evaluation.',
-    },
-  ];
+    await execute(() => todoAPI.delete(taskId), 'Task deleted successfully!');
+    fetchTasks(); // Refresh list
+  };
 
   // Exact colors from design
   const priorityColors = {
@@ -53,7 +54,58 @@ Deadline for Submission: End of Day`,
     'Completed': '#05A301',
   };
 
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   const currentTask = tasks[selectedTask];
+
+  // Show loading or empty state
+  if (loading && tasks.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p className="text-gray-500">Loading tasks...</p>
+      </div>
+    );
+  }
+
+  if (tasks.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-center">
+          {searchQuery ? (
+            <>
+              <p className="text-gray-500 mb-2">No tasks found for "{searchQuery}"</p>
+              <button
+                onClick={() => navigate('/my-task')}
+                className="text-[#FF6767] hover:text-[#F24E1E] text-sm font-medium transition-colors inline-flex items-center gap-1"
+              >
+                <MdClose size={18} />
+                Clear search
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="text-gray-500 mb-4">No tasks found. Create your first task!</p>
+              <button
+                onClick={() => navigate('/add-task')}
+                className="px-6 py-2.5 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-2"
+              >
+                <MdAdd size={20} />
+                Add Task
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -62,10 +114,33 @@ Deadline for Submission: End of Day`,
         {/* Left Panel - Task List */}
         <div className="w-full lg:w-[340px] xl:w-[380px] shrink-0 flex flex-col min-h-0">
           <div className="bg-white rounded-xl lg:rounded-2xl border border-[#D3D3D3] p-4 lg:p-6 flex flex-col flex-1 min-h-0">
-            {/* Header with underline */}
-            <h2 className="text-base lg:text-xl font-bold text-[#000000] border-b-2 border-[#FF6767] pb-1 mb-4 lg:mb-6 inline-block self-start">
-              My Tasks
-            </h2>
+            {/* Header with Add Task button */}
+            <div className="mb-4 lg:mb-6 shrink-0">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base lg:text-xl font-bold text-[#000000] border-b-2 border-[#FF6767] pb-1">
+                  My Tasks
+                </h2>
+                <button
+                  onClick={() => navigate('/add-task')}
+                  className="flex items-center gap-1 text-[#FF6767] hover:text-[#F24E1E] transition-colors"
+                >
+                  <MdAdd size={18} />
+                  <span className="text-xs font-medium">Add Task</span>
+                </button>
+              </div>
+              {searchQuery && (
+                <div className="mt-2 flex items-center gap-2 text-xs text-[#747474]">
+                  <span>Searching for: <strong className="text-[#000000]">"{searchQuery}"</strong></span>
+                  <button
+                    onClick={() => navigate('/my-task')}
+                    className="flex items-center gap-1 text-[#FF6767] hover:text-[#F24E1E] transition-colors"
+                  >
+                    <MdClose size={16} />
+                    <span>Clear</span>
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Task List */}
             <div className="space-y-3 lg:space-y-4 overflow-y-auto flex-1 min-h-0 pr-1">
@@ -100,11 +175,11 @@ Deadline for Submission: End of Day`,
                         </button>
                       </div>
                       <p className="text-xs lg:text-sm text-[#747474] mb-2 line-clamp-2">{task.description}</p>
-                      
+
                       {/* Image */}
-                      {task.image && (
+                      {task.image_url && (
                         <div className="w-16 lg:w-20 h-12 lg:h-16 rounded-lg overflow-hidden mb-2">
-                          <img src={task.image} alt="" className="w-full h-full object-cover" />
+                          <img src={task.image_url} alt="" className="w-full h-full object-cover" />
                         </div>
                       )}
 
@@ -118,7 +193,7 @@ Deadline for Submission: End of Day`,
                           <span className="text-[#A1A3AB]">Status: </span>
                           <span style={{ color: statusColors[task.status] }}>{task.status}</span>
                         </span>
-                        <span className="text-[#A1A3AB]">Created on: {task.createdAt}</span>
+                        <span className="text-[#A1A3AB]">Created on: {formatDate(task.created_at)}</span>
                       </div>
                     </div>
                   </div>
@@ -134,16 +209,16 @@ Deadline for Submission: End of Day`,
             {/* Header section */}
             <div className="flex gap-4 lg:gap-6 mb-4 lg:mb-6">
               {/* Image */}
-              {currentTask.image && (
+              {currentTask.image_url && (
                 <div className="w-24 h-24 lg:w-[140px] lg:h-[120px] rounded-xl overflow-hidden shrink-0">
-                  <img 
-                    src={currentTask.image} 
+                  <img
+                    src={currentTask.image_url}
                     alt={currentTask.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
               )}
-              
+
               {/* Title and meta */}
               <div className="flex-1 min-w-0">
                 <h2 className="text-lg lg:text-xl font-bold text-[#000000] mb-2">{currentTask.title}</h2>
@@ -156,7 +231,7 @@ Deadline for Submission: End of Day`,
                     <span className="text-[#000000]">Status: </span>
                     <span style={{ color: statusColors[currentTask.status] }}>{currentTask.status}</span>
                   </p>
-                  <p className="text-xs text-[#A1A3AB]">Created on: {currentTask.createdAt}</p>
+                  <p className="text-xs text-[#A1A3AB]">Created on: {formatDate(currentTask.created_at)}</p>
                 </div>
               </div>
             </div>
@@ -164,14 +239,14 @@ Deadline for Submission: End of Day`,
             {/* Description */}
             <div className="flex-1 overflow-y-auto min-h-0 pb-16">
               <div className="text-xs lg:text-sm text-[#747474] leading-relaxed whitespace-pre-line">
-                {currentTask.fullDescription}
+                {currentTask.description}
               </div>
             </div>
 
             {/* Action Buttons */}
             <div className="absolute bottom-4 lg:bottom-6 right-4 lg:right-6 flex items-center gap-2 lg:gap-3">
               <button
-                onClick={() => {/* Handle delete */}}
+                onClick={() => handleDelete(currentTask.id)}
                 className="w-9 h-9 lg:w-10 lg:h-10 bg-[#FF6767] hover:bg-[#F24E1E] text-white rounded-lg flex items-center justify-center transition-colors"
               >
                 <MdDelete size={20} />

@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdCalendarToday } from 'react-icons/md';
-import { todoAPI } from '../services/api';
+import { todoAPI, categoryAPI } from '../services/api';
 import { useAPI } from '../hooks/useAPI';
 import toast from 'react-hot-toast';
 
@@ -10,12 +10,14 @@ export function AddTask() {
   const { loading, execute } = useAPI();
   const fileInputRef = useRef(null);
   const dateInputRef = useRef(null);
-  
+
+  const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     priority: 'Moderate',
     status: 'Not Started',
+    category: null,
     dueDate: '',
     image: null,
     imageFile: null,
@@ -23,6 +25,22 @@ export function AddTask() {
 
   const [dragActive, setDragActive] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+
+  // Fetch categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const data = await execute(() => categoryAPI.getAll());
+      // Handle both array response and object with results
+      if (Array.isArray(data)) {
+        setCategories(data);
+      } else if (data?.results && Array.isArray(data.results)) {
+        setCategories(data.results);
+      } else {
+        setCategories([]);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleChange = e => {
     setFormData({
@@ -99,6 +117,10 @@ export function AddTask() {
         status: formData.status,
         image: formData.imageFile,
       };
+
+      if (formData.category) {
+        taskData.category = formData.category;
+      }
 
       if (formData.dueDate) {
         // Convert date to ISO format
@@ -243,6 +265,45 @@ export function AddTask() {
                   />
                 </label>
               </div>
+            </div>
+
+            {/* Status */}
+            <div className="mb-5">
+              <label className="block text-sm font-medium text-black mb-2">
+                Status
+              </label>
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full max-w-[420px] h-11 px-4 rounded-md bg-white border border-gray-200 focus:outline-none focus:border-gray-400 transition-colors text-black text-sm"
+              >
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
+            {/* Category */}
+            <div className="mb-5">
+              <label className="block text-sm font-medium text-black mb-2">
+                Category
+              </label>
+              <select
+                name="category"
+                value={formData.category || ''}
+                onChange={handleChange}
+                disabled={loading}
+                className="w-full max-w-[420px] h-11 px-4 rounded-md bg-white border border-gray-200 focus:outline-none focus:border-gray-400 transition-colors text-black text-sm"
+              >
+                <option value="">No Category</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Task Description and Upload Image Row */}

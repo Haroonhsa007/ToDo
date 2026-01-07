@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { userAPI } from '../services/api';
+import { useAPI } from '../hooks/useAPI';
+import { useAuth } from '../contexts/AuthContext';
 
 export function ChangePassword() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { loading, execute } = useAPI();
 
   const [formData, setFormData] = useState({
     currentPassword: '',
@@ -17,9 +22,40 @@ export function ChangePassword() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle password change
+
+    // Validation
+    if (!formData.currentPassword || !formData.newPassword || !formData.confirmPassword) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    if (formData.newPassword !== formData.confirmPassword) {
+      alert('New password and confirm password do not match');
+      return;
+    }
+
+    if (formData.newPassword.length < 8) {
+      alert('Password must be at least 8 characters long');
+      return;
+    }
+
+    const passwordData = {
+      oldPassword: formData.currentPassword,
+      newPassword: formData.newPassword,
+      confirmPassword: formData.confirmPassword,
+    };
+
+    await execute(() => userAPI.changePassword(passwordData), 'Password changed successfully!');
+
+    // Clear form
+    setFormData({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    });
+
     navigate(-1);
   };
 
@@ -44,16 +80,16 @@ export function ChangePassword() {
         <div className="flex-1 overflow-y-auto min-h-0">
           {/* User Profile Section */}
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-[#D9D9D9] shrink-0">
-              <img 
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200" 
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-[#D9D9D9] shrink-0 flex items-center justify-center">
+              <span className="text-2xl font-bold text-white">
+                {user?.name ? user.name.charAt(0).toUpperCase() : user?.username?.charAt(0).toUpperCase() || 'U'}
+              </span>
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-[#000000]">Sundar Gurung</h2>
-              <p className="text-sm text-[#747474]">sundargurung360@gmail.com</p>
+              <h2 className="text-lg sm:text-xl font-bold text-[#000000]">
+                {user?.name || user?.username || 'User'}
+              </h2>
+              <p className="text-sm text-[#747474]">{user?.email || ''}</p>
             </div>
           </div>
 
