@@ -85,15 +85,14 @@ mysql -u root -p -P 3309
 ```
 
 ```sql
-CREATE DATABASE dbraxis
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_unicode_ci;
-
-CREATE USER 'userraxis'@'localhost'
-IDENTIFIED BY 'userraxis1234';
-
-GRANT ALL PRIVILEGES ON dbraxis.* TO 'userraxis'@'localhost';
+CREATE DATABASE todolist CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'todolist'@'localhost' IDENTIFIED BY 'todolist1234';
+GRANT ALL PRIVILEGES ON todolist.* TO 'todolist'@'localhost';
 FLUSH PRIVILEGES;
+SHOW DATABASES;
+USE todolist;
+
+
 ```
 
 #### Configure Database
@@ -507,3 +506,6 @@ For detailed API documentation, see `frontend/BACKEND_API_DOCUMENTATION.md`
 ## License
 
 MIT
+
+
+

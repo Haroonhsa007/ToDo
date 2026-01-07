@@ -9,7 +9,7 @@ import axios from './axios';
 export const userAPI = {
   // Register new user
   register: async (userData) => {
-    const response = await axios.post('/auth/register', {
+    const response = await axios.post('/auth/register/', {
       username: userData.username,
       email: userData.email,
       name: `${userData.firstName} ${userData.lastName}`.trim() || userData.username,
@@ -23,13 +23,13 @@ export const userAPI = {
 
   // Login
   login: async (credentials) => {
-    const response = await axios.post('/auth/login', credentials);
+    const response = await axios.post('/auth/login/', credentials);
     return response.data;
   },
 
   // Refresh token
   refreshToken: async (refreshToken) => {
-    const response = await axios.post('/auth/refresh', {
+    const response = await axios.post('/auth/refresh/', {
       refresh: refreshToken,
     });
     return response.data;
@@ -37,19 +37,19 @@ export const userAPI = {
 
   // Get current user
   getCurrentUser: async () => {
-    const response = await axios.get('/users/me');
+    const response = await axios.get('/users/me/');
     return response.data;
   },
 
   // Update user profile
   updateProfile: async (userData) => {
-    const response = await axios.put('/users/profile', userData);
+    const response = await axios.put('/users/profile/', userData);
     return response.data;
   },
 
   // Change password
   changePassword: async (passwordData) => {
-    const response = await axios.post('/users/change-password', {
+    const response = await axios.post('/users/change-password/', {
       old_password: passwordData.oldPassword,
       new_password: passwordData.newPassword,
       confirm_password: passwordData.confirmPassword,

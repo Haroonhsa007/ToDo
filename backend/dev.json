@@ -5,9 +5,9 @@
     "DATABASES": {
         "default": {
             "ENGINE": "django.db.backends.mysql",
-            "NAME": "dbraxis",
-            "USER": "userraxis",
-            "PASSWORD": "userraxis1234",
+            "NAME": "todolist",
+            "USER": "todolist",
+            "PASSWORD": "todolist1234",
             "HOST": "localhost",
             "PORT": "3309",
             "OPTIONS": {}
