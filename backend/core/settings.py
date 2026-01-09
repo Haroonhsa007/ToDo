@@ -5,14 +5,13 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# read the json file 
-with open(BASE_DIR / 'dev.json', 'r') as f:
-    config = json.load(f)
+# # read the json file 
+# with open(BASE_DIR / 'dev.json', 'r') as f:
+#     config = json.load(f)
 
-    # if DEBUG is True use the the dev.json else it the prod.json
-    if not config['DEBUG']:
-        with open(BASE_DIR / 'prod.json', 'r') as f:
-            config = json.load(f)
+# read the json file 
+with open(BASE_DIR / 'prod.json', 'r') as f:
+    config = json.load(f)
 
 SECRET_KEY = config['SECRET_KEY']
 
@@ -40,6 +39,7 @@ INSTALLED_APPS = [
     # Local apps
     "accounts",
     "todos",
+    "billing",
 ]
 
 # Use custom user model from accounts app
@@ -155,13 +155,13 @@ WHITENOISE_MAX_AGE = 31536000  # Cache static files for 1 year (in seconds)
 # ============================================================================
 
 UNFOLD = {
-    "SITE_TITLE": "Raxis Admin",
-    "SITE_HEADER": "Raxis Administration",
+    "SITE_TITLE": "TODO Admin",
+    "SITE_HEADER": "TODO Administration",
     "SITE_URL": "/",
     "SITE_SYMBOL": "settings",
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": True,
-    "ENVIRONMENT": "Raxis Backend v2",
+    "ENVIRONMENT": "TODO Backend v2",
     "SIDEBAR": {
         "show_search": True,
         "show_all_applications": True,
@@ -175,6 +175,7 @@ UNFOLD = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite dev server
     "http://localhost:3000",  # Alternative dev port
+    "https://9002b16214dc.ngrok-free.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -254,3 +255,19 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
 # Allowed image types
 ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+
+# ============================================================================
+# Polar.sh Configuration
+# ============================================================================
+
+# Polar API credentials
+POLAR_ACCESS_TOKEN = config.get('POLAR_ACCESS_TOKEN', 'polar_oat_7zlmrd0C1sB1iFSlfTSNkOrHTV053Da5NaPPs0xhxZh')
+POLAR_WEBHOOK_SECRET = config.get('POLAR_WEBHOOK_SECRET', 'polar_whs_QLyXd9vsHoIJBB8le7s7oKMqZPmokrIoEjjwF1b5X4x')
+
+# Polar server URL (sandbox or production)
+# Sandbox: https://sandbox-api.polar.sh
+# Production: https://api.polar.sh
+POLAR_SERVER_URL = config.get('POLAR_SERVER_URL', 'https://sandbox-api.polar.sh')
+
+# Polar organization ID (your organization on Polar)
+POLAR_ORGANIZATION_ID = config.get('POLAR_ORGANIZATION_ID', 'b1590d2a-96e0-45ed-ac79-b002a5873889')

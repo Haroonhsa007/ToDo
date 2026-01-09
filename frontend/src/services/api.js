@@ -203,6 +203,42 @@ export const categoryAPI = {
   },
 };
 
+// Billing API
+export const billingAPI = {
+  // Get all available products
+  getProducts: async () => {
+    const response = await axios.get('/billing/products/');
+    return response.data;
+  },
+
+  // Get current user's subscriptions
+  getMySubscriptions: async () => {
+    const response = await axios.get('/billing/subscriptions/');
+    return response.data;
+  },
+
+  // Check subscription status
+  getSubscriptionStatus: async () => {
+    const response = await axios.get('/billing/subscriptions/status/');
+    return response.data;
+  },
+
+  // Create checkout session
+  createCheckout: async (productId, priceId) => {
+    const response = await axios.post('/billing/checkout/', {
+      product_id: productId,
+      price_id: priceId,
+    });
+    return response.data;
+  },
+
+  // Cancel subscription
+  cancelSubscription: async (subscriptionId) => {
+    const response = await axios.post(`/billing/subscriptions/${subscriptionId}/cancel/`);
+    return response.data;
+  },
+};
+
 // Generic API helper functions
 export const api = {
   get: (url, config) => axios.get(url, config),

@@ -25,6 +25,20 @@ export function Settings() {
             <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-[#000000] mb-1 sm:mb-2">Change Password</h3>
             <p className="text-[#747474] text-xs sm:text-sm">Update your account password</p>
           </Link>
+          <Link
+            to="/my-subscriptions"
+            className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm border border-[#D9D9D9] hover:shadow-md transition-shadow text-left block"
+          >
+            <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-[#000000] mb-1 sm:mb-2">My Subscriptions</h3>
+            <p className="text-[#747474] text-xs sm:text-sm">Manage your active subscriptions</p>
+          </Link>
+          <Link
+            to="/pricing"
+            className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-sm border border-[#D9D9D9] hover:shadow-md transition-shadow text-left block"
+          >
+            <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-[#000000] mb-1 sm:mb-2">Subscription Plans</h3>
+            <p className="text-[#747474] text-xs sm:text-sm">View available plans and pricing</p>
+          </Link>
         </div>
       </div>
     </div>

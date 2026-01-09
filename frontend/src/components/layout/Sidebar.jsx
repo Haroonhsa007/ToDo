@@ -9,7 +9,6 @@ import {
 } from 'react-icons/md';
 import { BsExclamationLg } from 'react-icons/bs';
 import { FaRegCheckSquare, FaListUl } from 'react-icons/fa';
-import { useAuth } from '../../contexts/AuthContext';
 
 const menuItems = [
   { icon: MdDashboard, label: 'Dashboard', path: '/dashboard' },
@@ -21,19 +20,6 @@ const menuItems = [
 ];
 
 export function Sidebar({ onLogout, isCollapsed, onToggle }) {
-  const { user } = useAuth();
-
-  // Get user initials for avatar
-  const getUserInitials = () => {
-    if (user?.name) {
-      const names = user.name.split(' ');
-      if (names.length >= 2) {
-        return (names[0].charAt(0) + names[1].charAt(0)).toUpperCase();
-      }
-      return user.name.charAt(0).toUpperCase();
-    }
-    return user?.username?.charAt(0).toUpperCase() || 'U';
-  };
   return (
     <>
       {/* Mobile Overlay */}
@@ -46,13 +32,12 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
       )}
       <aside
         className={`
-          fixed left-0 bg-[#ff6767] flex flex-col
+          fixed left-0 bg-[#FF6767] flex flex-col
           transition-all duration-300 ease-in-out z-20
-          top-[100px] lg:top-[100px]
-          ${isCollapsed ? 'w-20 -translate-x-full lg:translate-x-0' : 'w-[365px] translate-x-0'}
-          h-[calc(100vh-100px)] lg:h-[calc(100vh-100px)]
-          rounded-tr-[8px] rounded-br-[8px]
-          shadow-[0px_4px_12px_0px_rgba(0,0,0,0.08)]
+          top-[64px] lg:top-[80px]
+          ${isCollapsed ? 'w-20 -translate-x-full lg:translate-x-0' : 'w-72 translate-x-0'}
+          h-[calc(100vh-64px)] lg:h-[calc(100vh-80px)]
+          rounded-tr-[20px] rounded-br-[20px]
         `}
       >
         {/* Toggle Button */}
@@ -62,9 +47,9 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
           aria-label="Toggle sidebar"
         >
           {isCollapsed ? (
-            <MdChevronRight className="text-[#ff6767] text-xl" />
+            <MdChevronRight className="text-[#FF6767] text-xl" />
           ) : (
-            <MdChevronLeft className="text-[#ff6767] text-xl" />
+            <MdChevronLeft className="text-[#FF6767] text-xl" />
           )}
         </button>
 
@@ -75,30 +60,22 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
             ${isCollapsed ? 'px-2' : 'px-6'}
           `}
         >
-          {/* Profile Photo - User Initials */}
-          <div
-            className={`rounded-full bg-white/20 flex items-center justify-center overflow-hidden ${isCollapsed ? 'w-12 h-12' : 'w-[86px] h-[86px]'}`}
-          >
-            {user?.profile_picture_url ? (
-              <img
-                src={user.profile_picture_url}
-                alt={user.name || user.username}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className={`text-white font-bold ${isCollapsed ? 'text-lg' : 'text-3xl'}`}>
-                {getUserInitials()}
-              </span>
-            )}
+          {/* Profile Photo */}
+          <div className={`rounded-full overflow-hidden border-[3px] border-white shadow-md ${isCollapsed ? 'w-12 h-12' : 'w-20 h-20'}`}>
+            <img
+              src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200"
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
           </div>
 
           {!isCollapsed && (
             <>
-              <h3 className="mt-3 text-white font-semibold text-base leading-normal text-center">
-                {user?.name || user?.username || 'User'}
+              <h3 className="mt-3 text-white font-semibold text-sm">
+                Sundar Gurung
               </h3>
-              <p className="text-white text-xs leading-normal mt-1 text-center break-all px-2">
-                {user?.email || ''}
+              <p className="text-white/80 text-xs">
+                sundargurung360@gmail.com
               </p>
             </>
           )}
@@ -107,8 +84,8 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
         {/* Navigation Menu */}
         <nav
           className={`
-            flex-1 flex flex-col transition-all duration-300 overflow-y-auto
-            ${isCollapsed ? 'px-2' : 'px-[21px]'}
+            flex-1 space-y-1 transition-all duration-300 overflow-y-auto
+            ${isCollapsed ? 'px-2' : 'px-4'}
           `}
         >
           {menuItems.map((item) => {
@@ -119,15 +96,12 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
                 key={item.label}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center transition-all duration-200
-                  ${isCollapsed 
-                    ? 'justify-center px-2 h-12 rounded-lg' 
-                    : 'h-[59px] w-[288px] px-[20px] rounded-[14px]'
-                  }
+                  `flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200
                   ${isActive
-                    ? 'bg-white text-[#ff6767] font-medium'
-                    : 'text-white hover:bg-white/10 bg-transparent'
+                    ? 'bg-white text-[#FF6767] font-semibold shadow-sm'
+                    : 'text-white hover:bg-white/10'
                   }
+                  ${isCollapsed ? 'justify-center px-2' : ''}
                   `
                 }
                 title={isCollapsed ? item.label : ''}
@@ -135,12 +109,10 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
                 {({ isActive }) => (
                   <>
                     <Icon
-                      className={`text-xl shrink-0 ${isActive ? 'text-[#ff6767]' : 'text-white'}`}
+                      className={`text-xl shrink-0 ${isActive ? 'text-[#FF6767]' : 'text-white'}`}
                     />
                     {!isCollapsed && (
-                      <span className="text-base font-medium leading-normal ml-4 whitespace-nowrap">
-                        {item.label}
-                      </span>
+                      <span className="text-sm whitespace-nowrap">{item.label}</span>
                     )}
                   </>
                 )}
@@ -152,27 +124,20 @@ export function Sidebar({ onLogout, isCollapsed, onToggle }) {
         {/* Logout Button */}
         <div
           className={`
-            transition-all duration-300 mb-8
-            ${isCollapsed ? 'px-2 flex justify-center' : 'px-[21px]'}
+            py-8 transition-all duration-300
+            ${isCollapsed ? 'px-2 flex justify-center' : 'px-4'}
           `}
         >
           <button
             onClick={onLogout}
             className={`
-              flex items-center text-white hover:opacity-80 transition-opacity
-              ${isCollapsed 
-                ? 'justify-center h-12 w-full rounded-lg' 
-                : 'h-[59px] w-[288px] px-[20px] rounded-[14px]'
-              }
+              flex items-center gap-4 text-white text-sm hover:opacity-80 transition-opacity
+              ${isCollapsed ? 'justify-center' : 'px-4'}
             `}
             title="Logout"
           >
             <MdLogout className="text-xl shrink-0" />
-            {!isCollapsed && (
-              <span className="text-base font-medium leading-normal ml-4">
-                Logout
-              </span>
-            )}
+            {!isCollapsed && <span>Logout</span>}
           </button>
         </div>
       </aside>

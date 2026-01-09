@@ -8,6 +8,7 @@ A clean, production-ready Django REST Framework backend with MySQL database, JWT
 - **Task Management**: Full CRUD operations for tasks with filtering, search, and statistics
 - **Category Management**: User-scoped categories for organizing tasks
 - **File Upload**: Image upload support for tasks
+- **Billing & Subscriptions**: Polar.sh integration for subscription management and payments
 - **User Isolation**: Users can only access their own tasks and categories
 - **Comprehensive Testing**: pytest test suite with high coverage
 - **API Versioning**: Versioned API endpoints (`/api/v1/`)
@@ -18,6 +19,7 @@ A clean, production-ready Django REST Framework backend with MySQL database, JWT
 - **API**: Django REST Framework
 - **Database**: MySQL
 - **Authentication**: JWT (djangorestframework-simplejwt)
+- **Payments**: Polar.sh (polar-sdk)
 - **CORS**: django-cors-headers
 - **Testing**: pytest, pytest-django, pytest-cov
 - **Image Processing**: Pillow
@@ -43,6 +45,20 @@ backend/
 │   │   ├── views.py        # Task views
 │   │   └── urls.py         # Task URL patterns
 │   └── test/               # pytest tests
+├── billing/                 # Billing & subscriptions (Polar.sh)
+│   ├── models.py           # Product, Price, Subscription models
+│   ├── admin.py            # Django admin for subscription management
+│   ├── signals.py          # Auto-sync to Polar.sh
+│   ├── services/           # Polar API integration
+│   │   ├── polar_client.py # Polar SDK client
+│   │   └── sync_service.py # Sync service
+│   ├── webhooks/           # Webhook handlers
+│   │   ├── handlers.py     # Webhook endpoint
+│   │   └── processors.py   # Event processors
+│   └── api/v1/             # Billing API endpoints
+│       ├── serializers.py  # Billing serializers
+│       ├── views.py        # Billing views
+│       └── urls.py         # Billing URL patterns
 ├── common/                  # Shared utilities
 │   └── utils.py            # Helper functions
 ├── requirements.txt         # Python dependencies
@@ -74,6 +90,9 @@ source venv/bin/activate
 
 ```bash
 pip install -r requirements.txt
+
+# Install Polar SDK for billing integration
+pip install polar-sdk
 ```
 
 ### 3. Database Setup
@@ -360,6 +379,131 @@ DELETE /api/v1/categories/{id}/
 Authorization: Bearer <access_token>
 ```
 
+### Billing Endpoints
+
+All billing endpoints require authentication except for listing products.
+
+#### List Products
+```http
+GET /api/v1/billing/products/
+# No authentication required - public endpoint
+
+# Returns available subscription products with their prices
+```
+
+#### Get My Subscriptions
+```http
+GET /api/v1/billing/subscriptions/
+Authorization: Bearer <access_token>
+
+# Returns all subscriptions for the current user
+```
+
+#### Check Subscription Status
+```http
+GET /api/v1/billing/subscriptions/status/
+Authorization: Bearer <access_token>
+
+# Returns whether user has an active subscription
+```
+
+**Response:**
+```json
+{
+  "has_active_subscription": true,
+  "subscriptions": [
+    {
+      "id": 1,
+      "product": {
+        "id": 1,
+        "name": "Premium Plan",
+        "description": "Access to all features"
+      },
+      "price": {
+        "price_amount": 999,
+        "price_display": "$9.99",
+        "interval_display": "per month"
+      },
+      "status": "active",
+      "current_period_end": "2026-02-08T00:00:00Z",
+      "is_active": true
+    }
+  ]
+}
+```
+
+#### Create Checkout Session
+```http
+POST /api/v1/billing/checkout/
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "product_id": 1,
+  "price_id": 1,
+  "success_url": "https://yourapp.com/success" (optional)
+}
+```
+
+**Response:**
+```json
+{
+  "checkout_url": "https://polar.sh/checkout/...",
+  "subscription_id": 1
+}
+```
+
+#### Cancel Subscription
+```http
+POST /api/v1/billing/subscriptions/{id}/cancel/
+Authorization: Bearer <access_token>
+
+# Cancels subscription at end of billing period
+```
+
+### Webhook Endpoints
+
+#### Polar.sh Webhook
+```http
+POST /webhooks/polar/
+Content-Type: application/json
+
+# This endpoint receives webhook events from Polar.sh
+# Configure this URL in your Polar.sh dashboard
+# Headers required:
+# - webhook-id
+# - webhook-timestamp
+# - webhook-signature
+```
+
+## Django Admin - Billing Management
+
+The billing system can be fully managed from the Django admin panel:
+
+1. **Products & Prices**: Create products and prices in admin
+2. **Auto-Sync**: Changes are automatically synced to Polar.sh via Django signals
+3. **Subscriptions**: View and manage all subscriptions
+4. **Webhook Events**: Monitor incoming webhook events for debugging
+5. **Manual Sync**: Use admin actions to manually sync products/prices if needed
+
+### Creating a Subscription Product
+
+1. Login to Django admin at `http://localhost:8000/admin/`
+2. Go to **Billing > Polar Products**
+3. Click **Add Polar Product**
+4. Fill in product details (name, description, type)
+5. Add prices inline (amount in cents, currency, interval)
+6. Click **Save** - Product will auto-sync to Polar.sh
+7. Check sync status in the product list
+
+### Managing Subscriptions
+
+Subscriptions are created when customers complete checkout. You can:
+- View all subscriptions in admin
+- Check subscription status and billing periods
+- Cancel subscriptions
+- View checkout URLs for pending subscriptions
+
 ## Testing
 
 ### Run All Tests
@@ -412,9 +556,32 @@ The backend uses `dev.json` for configuration. For production, create `prod.json
             "PORT": "3309",
             "OPTIONS": {}
         }
-    }
+    },
+    "POLAR_ACCESS_TOKEN": "polar_sandbox_...",
+    "POLAR_WEBHOOK_SECRET": "whsec_...",
+    "POLAR_SERVER_URL": "https://sandbox-api.polar.sh",
+    "POLAR_ORGANIZATION_ID": "your-org-id"
 }
 ```
+
+### Polar.sh Configuration
+
+To enable billing features, you need to configure Polar.sh:
+
+1. **Create a Polar.sh Account**: Sign up at [https://polar.sh](https://polar.sh)
+2. **Get API Credentials**:
+   - Go to Settings > API Keys
+   - Create a new API key for development (sandbox)
+   - Copy the access token (starts with `polar_sandbox_`)
+3. **Setup Webhook Secret**:
+   - Go to Settings > Webhooks
+   - Create a new webhook endpoint: `https://your-domain.com/webhooks/polar/`
+   - Copy the webhook secret (starts with `whsec_`)
+4. **Get Organization ID**:
+   - Find your organization ID in the Polar dashboard URL
+5. **Update `dev.json`** with your credentials
+
+**Important**: For production, use production API keys (start with `polar_` instead of `polar_sandbox_`) and update `POLAR_SERVER_URL` to `https://api.polar.sh`
 
 ## CORS Configuration
 

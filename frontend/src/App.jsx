@@ -18,6 +18,8 @@ import { Calendar } from './pages/Calendar';
 import { CreateCategories } from './pages/CreateCategories';
 import { Settings } from './pages/Settings';
 import { Help } from './pages/Help';
+import { Pricing } from './pages/Pricing';
+import { MySubscriptions } from './pages/MySubscriptions';
 
 // Protected Route Component
 function ProtectedRoute({ children }) {
@@ -111,6 +113,8 @@ function AppRoutes() {
                   <Route path="/edit-task" element={<EditTask />} />
                   <Route path="/view-task" element={<ViewTask />} />
                   <Route path="/create-categories" element={<CreateCategories />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/my-subscriptions" element={<MySubscriptions />} />
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   <Route path="*" element={<Navigate to="/dashboard" replace />} />
                 </Routes>
