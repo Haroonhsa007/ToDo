@@ -41,15 +41,36 @@ def validate_image_file(file):
 def get_image_url(request, image_field):
     """
     Get full URL for an image field.
-    
+
     Args:
         request: HTTP request object
         image_field: ImageField instance
-        
+
     Returns:
         str: Full URL to the image or None
     """
     if image_field and hasattr(image_field, 'url'):
         return request.build_absolute_uri(image_field.url)
     return None
+
+
+def get_bolt_base_url(request) -> str | None:
+    """
+    Build base URL (scheme + host + port) from a Django-Bolt Request scope.
+    Use for absolute URIs (e.g. media URLs) in Bolt handlers.
+    """
+    try:
+        scope = getattr(request, "scope", None)
+        if not scope:
+            return None
+        scheme = scope.get("scheme", "http")
+        server = scope.get("server")
+        if not server:
+            return None
+        host, port = server[0], server[1]
+        if port and (scheme == "https" and port != 443 or scheme == "http" and port != 80):
+            return f"{scheme}://{host}:{port}"
+        return f"{scheme}://{host}"
+    except Exception:
+        return None
 

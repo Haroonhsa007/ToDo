@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "corsheaders",
+
+    "django_bolt",
     
     # Local apps
     "accounts",
@@ -89,6 +91,8 @@ DATABASES = {
         'HOST': config['DATABASES']['default']['HOST'],
         'PORT': config['DATABASES']['default']['PORT'],
         'OPTIONS': config['DATABASES']['default'].get('OPTIONS', {}),
+        # Reuse connections for speed; 60s idle then close (reliability)
+        'CONN_MAX_AGE': 60,
     }
 }
 
