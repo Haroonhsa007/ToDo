@@ -91,6 +91,8 @@ DATABASES = {
         'HOST': config['DATABASES']['default']['HOST'],
         'PORT': config['DATABASES']['default']['PORT'],
         'OPTIONS': config['DATABASES']['default'].get('OPTIONS', {}),
+        # Reuse connections for speed; 60s idle then close (reliability)
+        'CONN_MAX_AGE': 60,
     }
 }
 

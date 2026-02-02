@@ -1,21 +1,24 @@
 """
 Accounts API v2 – Django Bolt endpoints.
 Replica of v1 auth and user endpoints using Bolt.
+Uses Depends(get_current_user_async), model_validator in schemas, Conflict for duplicates.
 """
-
 from asgiref.sync import sync_to_async
 
+from django.db.models import Q
 from django.contrib.auth import aauthenticate, get_user_model
 
-from django_bolt import BoltAPI, Request
+from django_bolt import Depends, Request
 from django_bolt.auth import (
     AllowAny,
     IsAuthenticated,
     JWTAuthentication,
     create_jwt_for_user,
 )
-from django_bolt.exceptions import BadRequest, Unauthorized
+from django_bolt.exceptions import BadRequest, Conflict, Unauthorized
 
+from common.deps import get_current_user_async
+from common.utils import get_bolt_base_url
 from core.api import api
 
 from .schemas import (
@@ -26,7 +29,6 @@ from .schemas import (
 )
 
 User = get_user_model()
-
 JWT_EXPIRY = 3600
 
 
@@ -51,24 +53,6 @@ def _user_payload(user, base_url: str | None = None):
     return data
 
 
-def _get_base_url(request: Request) -> str | None:
-    """Build base URL from Bolt request for absolute URIs."""
-    try:
-        scope = getattr(request, "scope", None)
-        if not scope:
-            return None
-        scheme = scope.get("scheme", "http")
-        server = scope.get("server")
-        if not server:
-            return None
-        host, port = server[0], server[1]
-        if port and (scheme == "https" and port != 443 or scheme == "http" and port != 80):
-            return f"{scheme}://{host}:{port}"
-        return f"{scheme}://{host}"
-    except Exception:
-        return None
-
-
 # ---- Auth (public) ----
 
 
@@ -85,8 +69,8 @@ async def login(body: LoginRequest):
     )
     if user is None:
         raise Unauthorized(detail="Invalid credentials.")
-    token = create_jwt_for_user(user, expires_in=JWT_EXPIRY)
-    payload = _user_payload(user)
+    token = await sync_to_async(create_jwt_for_user)(user, expires_in=JWT_EXPIRY)
+    payload = await sync_to_async(_user_payload)(user)
     return {
         "access": token,
         "refresh": token,
@@ -102,14 +86,10 @@ async def login(body: LoginRequest):
     status_code=201,
 )
 async def register(body: RegisterRequest):
-    if body.password != body.password_confirm:
-        raise BadRequest(detail="Passwords do not match.")
-    exists = await User.objects.filter(username=body.username).aexists()
-    if exists:
-        raise BadRequest(detail="Username already exists.")
-    exists = await User.objects.filter(email=body.email).aexists()
-    if exists:
-        raise BadRequest(detail="Email already exists.")
+    if await User.objects.filter(
+        Q(username=body.username) | Q(email=body.email)
+    ).aexists():
+        raise Conflict(detail="Username or email already exists.")
     user = await sync_to_async(User.objects.create_user)(
         username=body.username,
         email=body.email,
@@ -118,8 +98,8 @@ async def register(body: RegisterRequest):
         first_name=getattr(body, "first_name", "") or "",
         last_name=getattr(body, "last_name", "") or "",
     )
-    token = create_jwt_for_user(user, expires_in=JWT_EXPIRY)
-    payload = _user_payload(user)
+    token = await sync_to_async(create_jwt_for_user)(user, expires_in=JWT_EXPIRY)
+    payload = await sync_to_async(_user_payload)(user)
     return {"access": token, "refresh": token, "user": payload}
 
 
@@ -130,10 +110,9 @@ async def register(body: RegisterRequest):
     summary="Refresh access token",
     tags=["accounts", "auth"],
 )
-async def refresh(request: Request):
+async def refresh(request: Request, user=Depends(get_current_user_async)):
     """Re-issue a new access token from current valid token."""
-    user = request.user
-    token = create_jwt_for_user(user, expires_in=JWT_EXPIRY)
+    token = await sync_to_async(create_jwt_for_user)(user, expires_in=JWT_EXPIRY)
     return {"access": token, "refresh": token}
 
 
@@ -152,54 +131,61 @@ async def verify(request: Request):
 
 
 @api.get(
-    "users/me/",
+    "/users/me/",
     auth=[JWTAuthentication()],
     guards=[IsAuthenticated()],
     summary="Current user profile",
     tags=["accounts", "users"],
 )
-async def me(request: Request):
-    user = request.user
-    base_url = _get_base_url(request)
-    return _user_payload(user, base_url=base_url)
+async def me(request: Request, user=Depends(get_current_user_async)):
+    base_url = get_bolt_base_url(request)
+    return await sync_to_async(_user_payload)(user, base_url)
 
 
 @api.put(
-    "users/profile/",
+    "/users/profile/",
     auth=[JWTAuthentication()],
     guards=[IsAuthenticated()],
     summary="Update profile",
     tags=["accounts", "users"],
 )
-async def update_profile(request: Request, body: UpdateProfileRequest):
-    user = request.user
+async def update_profile(
+    request: Request,
+    body: UpdateProfileRequest,
+    user=Depends(get_current_user_async),
+):
+    update_fields = []
     if body.name is not None:
         user.name = body.name
+        update_fields.append("name")
     if body.first_name is not None:
         user.first_name = body.first_name
+        update_fields.append("first_name")
     if body.last_name is not None:
         user.last_name = body.last_name
+        update_fields.append("last_name")
     if body.email is not None:
-        exists = await User.objects.filter(email=body.email).exclude(pk=user.pk).aexists()
-        if exists:
-            raise BadRequest(detail="Email already exists.")
+        if await User.objects.filter(email=body.email).exclude(pk=user.pk).aexists():
+            raise Conflict(detail="Email already exists.")
         user.email = body.email
-    await sync_to_async(user.save)()
-    base_url = _get_base_url(request)
-    return _user_payload(user, base_url=base_url)
+        update_fields.append("email")
+    if update_fields:
+        await sync_to_async(user.save)(update_fields=update_fields)
+    return await sync_to_async(_user_payload)(user, get_bolt_base_url(request))
 
 
 @api.post(
-    "users/change-password/",
+    "/users/change-password/",
     auth=[JWTAuthentication()],
     guards=[IsAuthenticated()],
     summary="Change password",
     tags=["accounts", "users"],
 )
-async def change_password(request: Request, body: PasswordChangeRequest):
-    if body.new_password != body.confirm_password:
-        raise BadRequest(detail="New passwords do not match.")
-    user = request.user
+async def change_password(
+    request: Request,
+    body: PasswordChangeRequest,
+    user=Depends(get_current_user_async),
+):
     ok = await sync_to_async(user.check_password)(body.old_password)
     if not ok:
         raise BadRequest(detail="Old password is incorrect.")

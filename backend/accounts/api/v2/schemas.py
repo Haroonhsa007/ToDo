@@ -1,11 +1,12 @@
 """
 Bolt request/response schemas for accounts API v2.
+Uses Serializer + Meta constraints + model_validator for cross-field validation.
 """
 from typing import Annotated
 
 from msgspec import Meta
 
-from django_bolt.serializers import Serializer
+from django_bolt.serializers import Serializer, model_validator
 
 
 class LoginRequest(Serializer):
@@ -26,6 +27,14 @@ class RegisterRequest(Serializer):
     password: Annotated[str, Meta(min_length=8)]
     password_confirm: Annotated[str, Meta(min_length=8)]
 
+    @model_validator
+    def passwords_match(self):
+        if self.password != self.password_confirm:
+            raise ValueError("Passwords do not match.")
+
+    class Config:
+        write_only = {"password", "password_confirm"}
+
 
 class UpdateProfileRequest(Serializer):
     """Partial profile update (all optional)."""
@@ -42,3 +51,11 @@ class PasswordChangeRequest(Serializer):
     old_password: str
     new_password: Annotated[str, Meta(min_length=8)]
     confirm_password: Annotated[str, Meta(min_length=8)]
+
+    @model_validator
+    def new_passwords_match(self):
+        if self.new_password != self.confirm_password:
+            raise ValueError("New passwords do not match.")
+
+    class Config:
+        write_only = {"old_password", "new_password", "confirm_password"}

@@ -1,22 +1,25 @@
 """
 Todos API v2 – Django Bolt endpoints.
 Replica of v1 Task and Category CRUD + statistics using Bolt.
+Uses Depends(get_current_user_async), common.get_bolt_base_url, Conflict for duplicates.
 """
 from typing import Annotated
 
 from asgiref.sync import sync_to_async
 from django.db.models import Q
 
-from django_bolt import Request
+from django_bolt import Depends, Request
 from django_bolt.auth import IsAuthenticated, JWTAuthentication
-from django_bolt.exceptions import BadRequest, NotFound
+from django_bolt.exceptions import BadRequest, Conflict, NotFound
 from django_bolt.param_functions import Query
 
+from common.deps import get_current_user_async
+from common.utils import get_bolt_base_url
 from core.api import api
-
 from todos.models import Category, Task
 
 from .schemas import (
+    ALLOWED_ORDERING,
     CategoryCreate,
     CategoryUpdate,
     TaskCreate,
@@ -58,23 +61,6 @@ def _task_payload(task: Task, base_url: str | None = None) -> dict:
     return data
 
 
-def _get_base_url(request: Request) -> str | None:
-    try:
-        scope = getattr(request, "scope", None)
-        if not scope:
-            return None
-        scheme = scope.get("scheme", "http")
-        server = scope.get("server")
-        if not server:
-            return None
-        host, port = server[0], server[1]
-        if port and (scheme == "https" and port != 443 or scheme == "http" and port != 80):
-            return f"{scheme}://{host}:{port}"
-        return f"{scheme}://{host}"
-    except Exception:
-        return None
-
-
 # ---- Categories ----
 
 
@@ -85,12 +71,11 @@ def _get_base_url(request: Request) -> str | None:
     summary="List categories",
     tags=["todos", "categories"],
 )
-async def category_list(request: Request):
-    user = request.user
-    qs = Category.objects.filter(user=user).order_by("name")
+async def category_list(user=Depends(get_current_user_async)):
+    qs = Category.objects.filter(user=user).order_by("name")[:200]
     out = []
     async for cat in qs:
-        out.append(_category_payload(cat))
+        out.append(await sync_to_async(_category_payload)(cat))
     return out
 
 
@@ -102,17 +87,15 @@ async def category_list(request: Request):
     tags=["todos", "categories"],
     status_code=201,
 )
-async def category_create(request: Request, body: CategoryCreate):
-    user = request.user
-    exists = await Category.objects.filter(user=user, name=body.name).aexists()
-    if exists:
-        raise BadRequest(detail="You already have a category with this name.")
+async def category_create(body: CategoryCreate, user=Depends(get_current_user_async)):
+    if await Category.objects.filter(user=user, name=body.name).aexists():
+        raise Conflict(detail="You already have a category with this name.")
     cat = await Category.objects.acreate(
         user=user,
         name=body.name,
         color=body.color,
     )
-    return _category_payload(cat)
+    return await sync_to_async(_category_payload)(cat)
 
 
 @api.get(
@@ -122,13 +105,27 @@ async def category_create(request: Request, body: CategoryCreate):
     summary="Get category",
     tags=["todos", "categories"],
 )
-async def category_detail(request: Request, category_id: int):
-    user = request.user
+async def category_detail(category_id: int, user=Depends(get_current_user_async)):
     try:
         cat = await Category.objects.aget(id=category_id, user=user)
     except Category.DoesNotExist:
         raise NotFound(detail="Category not found.")
-    return _category_payload(cat)
+    return await sync_to_async(_category_payload)(cat)
+
+
+async def _category_update_impl(category_id: int, body: CategoryUpdate, user):
+    try:
+        cat = await Category.objects.aget(id=category_id, user=user)
+    except Category.DoesNotExist:
+        raise NotFound(detail="Category not found.")
+    if body.name is not None:
+        if await Category.objects.filter(user=user, name=body.name).exclude(pk=cat.pk).aexists():
+            raise Conflict(detail="You already have a category with this name.")
+        cat.name = body.name
+    if body.color is not None:
+        cat.color = body.color
+    await sync_to_async(cat.save)()
+    return await sync_to_async(_category_payload)(cat)
 
 
 @api.put(
@@ -138,21 +135,8 @@ async def category_detail(request: Request, category_id: int):
     summary="Update category",
     tags=["todos", "categories"],
 )
-async def category_update(request: Request, category_id: int, body: CategoryUpdate):
-    user = request.user
-    try:
-        cat = await Category.objects.aget(id=category_id, user=user)
-    except Category.DoesNotExist:
-        raise NotFound(detail="Category not found.")
-    if body.name is not None:
-        exists = await Category.objects.filter(user=user, name=body.name).exclude(pk=cat.pk).aexists()
-        if exists:
-            raise BadRequest(detail="You already have a category with this name.")
-        cat.name = body.name
-    if body.color is not None:
-        cat.color = body.color
-    await sync_to_async(cat.save)()
-    return _category_payload(cat)
+async def category_update(category_id: int, body: CategoryUpdate, user=Depends(get_current_user_async)):
+    return await _category_update_impl(category_id, body, user)
 
 
 @api.patch(
@@ -162,8 +146,8 @@ async def category_update(request: Request, category_id: int, body: CategoryUpda
     summary="Partial update category",
     tags=["todos", "categories"],
 )
-async def category_partial_update(request: Request, category_id: int, body: CategoryUpdate):
-    return await category_update(request, category_id, body)
+async def category_partial_update(category_id: int, body: CategoryUpdate, user=Depends(get_current_user_async)):
+    return await _category_update_impl(category_id, body, user)
 
 
 @api.delete(
@@ -174,8 +158,7 @@ async def category_partial_update(request: Request, category_id: int, body: Cate
     tags=["todos", "categories"],
     status_code=204,
 )
-async def category_delete(request: Request, category_id: int):
-    user = request.user
+async def category_delete(category_id: int, user=Depends(get_current_user_async)):
     try:
         cat = await Category.objects.aget(id=category_id, user=user)
     except Category.DoesNotExist:
@@ -196,8 +179,8 @@ async def category_delete(request: Request, category_id: int):
 async def task_list(
     request: Request,
     filters: Annotated[TaskFilters, Query()],
+    user=Depends(get_current_user_async),
 ):
-    user = request.user
     qs = Task.objects.filter(user=user).select_related("category")
     if filters.status:
         qs = qs.filter(status=filters.status)
@@ -210,12 +193,16 @@ async def task_list(
             Q(title__icontains=filters.search) | Q(description__icontains=filters.search)
         )
     ordering = (filters.ordering or "-created_at").strip()
-    if ordering:
+    if ordering and ordering in ALLOWED_ORDERING:
         qs = qs.order_by(ordering)
-    base_url = _get_base_url(request)
+    else:
+        qs = qs.order_by("-created_at")
+    base_url = get_bolt_base_url(request)
+    limit = min(filters.limit, 100)
+    offset = max(0, filters.offset)
     out = []
-    async for task in qs:
-        out.append(_task_payload(task, base_url=base_url))
+    async for task in qs[offset : offset + limit]:
+        out.append(await sync_to_async(_task_payload)(task, base_url))
     return out
 
 
@@ -227,8 +214,7 @@ async def task_list(
     tags=["todos", "tasks"],
     status_code=201,
 )
-async def task_create(request: Request, body: TaskCreate):
-    user = request.user
+async def task_create(request: Request, body: TaskCreate, user=Depends(get_current_user_async)):
     category = None
     if body.category_id is not None:
         try:
@@ -244,8 +230,8 @@ async def task_create(request: Request, body: TaskCreate):
         due_date=body.due_date,
         category=category,
     )
-    base_url = _get_base_url(request)
-    return _task_payload(task, base_url=base_url)
+    base_url = get_bolt_base_url(request)
+    return await sync_to_async(_task_payload)(task, base_url)
 
 
 @api.get(
@@ -255,24 +241,30 @@ async def task_create(request: Request, body: TaskCreate):
     summary="Task statistics",
     tags=["todos", "tasks"],
 )
-async def task_statistics(request: Request):
-    user = request.user
-    qs = Task.objects.filter(user=user)
-    total = await qs.acount()
-    completed = await qs.filter(status="Completed").acount()
-    in_progress = await qs.filter(status="In Progress").acount()
-    not_started = await qs.filter(status="Not Started").acount()
-    completed_pct = (completed / total * 100) if total else 0
-    in_progress_pct = (in_progress / total * 100) if total else 0
-    not_started_pct = (not_started / total * 100) if total else 0
+async def task_statistics(user=Depends(get_current_user_async)):
+    from django.db.models import Count, Q
+
+    def _aggregate():
+        return Task.objects.filter(user=user).aggregate(
+            total=Count("id"),
+            completed=Count("id", filter=Q(status="Completed")),
+            in_progress=Count("id", filter=Q(status="In Progress")),
+            not_started=Count("id", filter=Q(status="Not Started")),
+        )
+
+    stats = await sync_to_async(_aggregate)()
+    total = stats["total"] or 0
+    completed = stats["completed"] or 0
+    in_progress = stats["in_progress"] or 0
+    not_started = stats["not_started"] or 0
     return {
         "total": total,
         "completed": completed,
         "in_progress": in_progress,
         "not_started": not_started,
-        "completed_percentage": round(completed_pct, 2),
-        "in_progress_percentage": round(in_progress_pct, 2),
-        "not_started_percentage": round(not_started_pct, 2),
+        "completed_percentage": round((completed / total * 100), 2) if total else 0,
+        "in_progress_percentage": round((in_progress / total * 100), 2) if total else 0,
+        "not_started_percentage": round((not_started / total * 100), 2) if total else 0,
     }
 
 
@@ -283,13 +275,12 @@ async def task_statistics(request: Request):
     summary="Get task",
     tags=["todos", "tasks"],
 )
-async def task_detail(request: Request, task_id: int):
-    user = request.user
+async def task_detail(request: Request, task_id: int, user=Depends(get_current_user_async)):
     try:
         task = await Task.objects.select_related("category").aget(id=task_id, user=user)
     except Task.DoesNotExist:
         raise NotFound(detail="Task not found.")
-    return _task_payload(task, base_url=_get_base_url(request))
+    return await sync_to_async(_task_payload)(task, get_bolt_base_url(request))
 
 
 @api.put(
@@ -299,8 +290,13 @@ async def task_detail(request: Request, task_id: int):
     summary="Update task",
     tags=["todos", "tasks"],
 )
-async def task_update(request: Request, task_id: int, body: TaskUpdate):
-    return await _task_update_impl(request, task_id, body)
+async def task_update(
+    request: Request,
+    task_id: int,
+    body: TaskUpdate,
+    user=Depends(get_current_user_async),
+):
+    return await _task_update_impl(request, task_id, body, user)
 
 
 @api.patch(
@@ -310,26 +306,38 @@ async def task_update(request: Request, task_id: int, body: TaskUpdate):
     summary="Partial update task",
     tags=["todos", "tasks"],
 )
-async def task_partial_update(request: Request, task_id: int, body: TaskUpdate):
-    return await _task_update_impl(request, task_id, body)
+async def task_partial_update(
+    request: Request,
+    task_id: int,
+    body: TaskUpdate,
+    user=Depends(get_current_user_async),
+):
+    return await _task_update_impl(request, task_id, body, user)
 
 
-async def _task_update_impl(request: Request, task_id: int, body: TaskUpdate):
-    user = request.user
+async def _task_update_impl(
+    request: Request, task_id: int, body: TaskUpdate, user
+):
     try:
         task = await Task.objects.select_related("category").aget(id=task_id, user=user)
     except Task.DoesNotExist:
         raise NotFound(detail="Task not found.")
+    update_fields = []
     if body.title is not None:
         task.title = body.title
+        update_fields.append("title")
     if body.description is not None:
         task.description = body.description
+        update_fields.append("description")
     if body.priority is not None:
         task.priority = body.priority
+        update_fields.append("priority")
     if body.status is not None:
         task.status = body.status
+        update_fields.append("status")
     if body.due_date is not None:
         task.due_date = body.due_date
+        update_fields.append("due_date")
     if body.category_id is not None:
         if body.category_id == 0:
             task.category_id = None
@@ -339,8 +347,10 @@ async def _task_update_impl(request: Request, task_id: int, body: TaskUpdate):
                 task.category = cat
             except Category.DoesNotExist:
                 raise BadRequest(detail="Category not found or not yours.")
-    await sync_to_async(task.save)()
-    return _task_payload(task, base_url=_get_base_url(request))
+        update_fields.append("category_id")
+    if update_fields:
+        await sync_to_async(task.save)(update_fields=update_fields)
+    return await sync_to_async(_task_payload)(task, get_bolt_base_url(request))
 
 
 @api.delete(
@@ -351,8 +361,7 @@ async def _task_update_impl(request: Request, task_id: int, body: TaskUpdate):
     tags=["todos", "tasks"],
     status_code=204,
 )
-async def task_delete(request: Request, task_id: int):
-    user = request.user
+async def task_delete(task_id: int, user=Depends(get_current_user_async)):
     try:
         task = await Task.objects.aget(id=task_id, user=user)
     except Task.DoesNotExist:

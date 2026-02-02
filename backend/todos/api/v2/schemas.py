@@ -48,11 +48,29 @@ class TaskUpdate(Serializer):
     category_id: int | None = None
 
 
+ALLOWED_ORDERING = (
+    "created_at",
+    "-created_at",
+    "updated_at",
+    "-updated_at",
+    "due_date",
+    "-due_date",
+    "priority",
+    "-priority",
+    "status",
+    "-status",
+    "title",
+    "-title",
+)
+
+
 class TaskFilters(Serializer):
-    """Query params for task list."""
+    """Query params for task list. Ordering whitelisted for reliability."""
 
     status: Literal["Not Started", "In Progress", "Completed"] | None = None
     priority: Literal["Extreme", "Moderate", "Low"] | None = None
     category: int | None = None
     search: str | None = None
     ordering: str | None = "-created_at"
+    limit: Annotated[int, Meta(ge=1, le=100)] = 20
+    offset: Annotated[int, Meta(ge=0)] = 0
