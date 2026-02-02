@@ -9,7 +9,7 @@
             "USER": "todolist",
             "PASSWORD": "todolist1234",
             "HOST": "localhost",
-            "PORT": "3309",
+            "PORT": "3306",
             "OPTIONS": {}
         }
     }

@@ -155,13 +155,13 @@ WHITENOISE_MAX_AGE = 31536000  # Cache static files for 1 year (in seconds)
 # ============================================================================
 
 UNFOLD = {
-    "SITE_TITLE": "Raxis Admin",
-    "SITE_HEADER": "Raxis Administration",
+    "SITE_TITLE": "ToDo List Admin",
+    "SITE_HEADER": "ToDo List Administration",
     "SITE_URL": "/",
     "SITE_SYMBOL": "settings",
     "SHOW_HISTORY": True,
     "SHOW_VIEW_ON_SITE": True,
-    "ENVIRONMENT": "Raxis Backend v2",
+    "ENVIRONMENT": "ToDo List Backend v1",
     "SIDEBAR": {
         "show_search": True,
         "show_all_applications": True,

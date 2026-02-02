@@ -102,16 +102,16 @@ Database configuration is stored in `dev.json`:
 ```json
 {
     "DEBUG": true,
-    "SECRET_KEY": "your-secret-key",
+    "SECRET_KEY": "django-insecure-6eslm8u73q2g!@^tebpu7t3!lc*$h9n*70w&8=ne&s_$&1wmxj",
     "ALLOWED_HOSTS": ["*"],
     "DATABASES": {
         "default": {
             "ENGINE": "django.db.backends.mysql",
-            "NAME": "dbraxis",
-            "USER": "userraxis",
-            "PASSWORD": "userraxis1234",
+            "NAME": "todolist",
+            "USER": "todolist",
+            "PASSWORD": "todolist1234",
             "HOST": "localhost",
-            "PORT": "3309",
+            "PORT": "3306",
             "OPTIONS": {}
         }
     }
@@ -400,16 +400,16 @@ The backend uses `dev.json` for configuration. For production, create `prod.json
 ```json
 {
     "DEBUG": true,
-    "SECRET_KEY": "your-secret-key-here",
+    "SECRET_KEY": "django-insecure-6eslm8u73q2g!@^tebpu7t3!lc*$h9n*70w&8=ne&s_$&1wmxj",
     "ALLOWED_HOSTS": ["*"],
     "DATABASES": {
         "default": {
             "ENGINE": "django.db.backends.mysql",
-            "NAME": "dbraxis",
-            "USER": "userraxis",
-            "PASSWORD": "userraxis1234",
+            "NAME": "todolist",
+            "USER": "todolist",
+            "PASSWORD": "todolist1234",
             "HOST": "localhost",
-            "PORT": "3309",
+            "PORT": "3306",
             "OPTIONS": {}
         }
     }
@@ -479,7 +479,7 @@ Login with your superuser credentials to manage:
 1. Verify MySQL is running
 2. Check database credentials in `dev.json`
 3. Ensure database exists: `SHOW DATABASES;`
-4. Verify user permissions: `SHOW GRANTS FOR 'userraxis'@'localhost';`
+4. Verify user permissions: `SHOW GRANTS FOR 'usertodo'@'localhost';`
 
 ### Migration Issues
 
