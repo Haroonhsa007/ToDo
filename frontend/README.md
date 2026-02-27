@@ -1,6 +1,6 @@
-# React App with Tailwind CSS
+# ToDo Frontend (React + Tailwind CSS)
 
-A professional, scalable React application built with modern tools and best practices.
+A professional, scalable React application for the ToDo list platform, built with modern tools and best practices and wired to a Django REST backend (with Unfold admin and Django Control Room for operations).
 
 ## Features
 
@@ -75,7 +75,7 @@ The app will be available at `http://localhost:5173`
 Create a `.env` file in the root directory:
 
 ```env
-VITE_API_BASE_URL=http://localhost:8000/api
+VITE_API_BASE_URL=http://localhost:8000/api/v1
 VITE_APP_ENV=development
 ```
 

@@ -1,6 +1,6 @@
 # Django ToDo Backend API
 
-A clean, production-ready Django REST Framework backend with MySQL database, JWT authentication, task management, categories, and comprehensive test coverage.
+A clean, production-ready Django REST Framework backend with MySQL database, JWT authentication, task management, categories, comprehensive test coverage, and a Django Control Room–powered operations dashboard on top of the Unfold admin.
 
 ## Features
 
@@ -9,6 +9,7 @@ A clean, production-ready Django REST Framework backend with MySQL database, JWT
 - **Category Management**: User-scoped categories for organizing tasks
 - **File Upload**: Image upload support for tasks
 - **User Isolation**: Users can only access their own tasks and categories
+- **Admin & Control Room**: Modern Unfold-powered Django admin plus Django Control Room dashboard with Redis, Cache, URLs, and Celery panels for operations and debugging
 - **Comprehensive Testing**: pytest test suite with high coverage
 - **API Versioning**: Versioned API endpoints (`/api/v1/`)
 
@@ -18,6 +19,7 @@ A clean, production-ready Django REST Framework backend with MySQL database, JWT
 - **API**: Django REST Framework
 - **Database**: MySQL
 - **Authentication**: JWT (djangorestframework-simplejwt)
+- **Admin UI**: django-unfold + dj-control-room (with official Redis, Cache, URLs, Celery panels)
 - **CORS**: django-cors-headers
 - **Testing**: pytest, pytest-django, pytest-cov
 - **Image Processing**: Pillow
@@ -463,14 +465,23 @@ python manage.py migrate
 python manage.py showmigrations
 ```
 
-## Admin Interface
+## Admin Interface & Django Control Room
 
-Access the Django admin interface at `http://localhost:8000/admin/`
+Access the standard Django admin interface at `http://localhost:8000/admin/`.
 
-Login with your superuser credentials to manage:
-- Users
-- Tasks
-- Categories
+In addition, this project uses **[Django Control Room](https://djangocontrolroom.com/)** as a centralized operations dashboard:
+
+- **Control Room dashboard**: `http://localhost:8000/admin/dj-control-room/`
+- **Redis panel**: `http://localhost:8000/admin/dj-redis-panel/`
+- **Cache panel**: `http://localhost:8000/admin/dj-cache-panel/`
+- **URLs panel**: `http://localhost:8000/admin/dj-urls-panel/`
+- **Celery panel**: `http://localhost:8000/admin/dj-celery-panel/`
+
+All Control Room views require staff/superuser permissions. Panels are registered and organized under the "Django Control Room" section in the admin sidebar (see `core/settings.py`).
+
+Use your superuser account to:
+- Manage users, tasks, and categories via the regular Django admin
+- Inspect and debug infrastructure integrations (Redis, cache, URLs, Celery) via Django Control Room panels
 
 ## Troubleshooting
 
