@@ -24,7 +24,14 @@ ALLOWED_HOSTS = config['ALLOWED_HOSTS']
 INSTALLED_APPS = [
     # Django Unfold must be before django.contrib.admin
     "unfold",  # Modern Django admin theme
-    
+
+    # Django Control Room and official panels
+    "dj_control_room",
+    "dj_redis_panel",
+    "dj_cache_panel",
+    "dj_urls_panel",
+    "dj_celery_panel",
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,7 +45,7 @@ INSTALLED_APPS = [
     "corsheaders",
 
     "django_bolt",
-    
+
     # Local apps
     "accounts",
     "todos",
@@ -169,6 +176,22 @@ UNFOLD = {
     "SIDEBAR": {
         "show_search": True,
         "show_all_applications": True,
+    },
+}
+
+# ============================================================================
+# Django Control Room Configuration
+# ============================================================================
+
+DJ_CONTROL_ROOM_SETTINGS = {
+    # Keep panels organized under Django Control Room in the sidebar
+    "REGISTER_PANELS_IN_ADMIN": False,
+    "PANEL_ADMIN_REGISTRATION": {
+        # Panels we have installed
+        "dj_redis_panel": False,
+        "dj_cache_panel": False,
+        "dj_urls_panel": False,
+        "dj_celery_panel": False,
     },
 }
 

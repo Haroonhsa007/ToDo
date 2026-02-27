@@ -10,11 +10,19 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    
+    # Django Control Room dashboard and panels
+    path("admin/dj-redis-panel/", include("dj_redis_panel.urls")),
+    path("admin/dj-cache-panel/", include("dj_cache_panel.urls")),
+    path("admin/dj-urls-panel/", include("dj_urls_panel.urls")),
+    path("admin/dj-celery-panel/", include("dj_celery_panel.urls")),
+    path("admin/dj-control-room/", include("dj_control_room.urls")),
+
+    # Django admin
+    path("admin/", admin.site.urls),
+
     # API versioning
-    path('api/v1/', include('accounts.api.v1.urls')),
-    path('api/v1/', include('todos.api.v1.urls')),
+    path("api/v1/", include("accounts.api.v1.urls")),
+    path("api/v1/", include("todos.api.v1.urls")),
 ]
 
 # Serve media files in development
