@@ -521,6 +521,11 @@ File Tree: ToDo
 - **Fields**: Name, color (hex). Each user has their own set of categories; names are unique per user.
 - Tasks can be optionally linked to one category.
 
+### Operations & Control Room
+
+- **Unfold Admin UI**: Modern Django admin at `/admin/` for managing users, tasks, and categories.
+- **Django Control Room dashboard**: Central operations console at `/admin/dj-control-room/` with Redis, cache, URL, and Celery panels to help you monitor and debug the system (see `backend/README.md` for more details).
+
 ### UI / UX
 
 - **Dashboard**: Overview and task statistics.

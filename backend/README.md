@@ -1,6 +1,6 @@
 # Django ToDo Backend API
 
-A clean, production-ready Django REST Framework backend with MySQL database, JWT authentication, task management, categories, and comprehensive test coverage.
+A clean, production-ready Django REST Framework backend with MySQL database, JWT authentication, task management, categories, comprehensive test coverage, and a Django Control Room–powered operations dashboard on top of the Unfold admin.
 
 ## Features
 
