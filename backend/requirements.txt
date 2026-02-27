@@ -36,7 +36,7 @@ dj-celery-panel==0.3.4
 dj-control-room==1.0.1
 dj-redis-panel==0.7.5
 dj-urls-panel==0.2.1
-Django==6.0
+Django>=6.0.2
 django-bolt==0.5.1
 django-cors-headers==4.9.0
 django-unfold==0.74.1
