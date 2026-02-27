@@ -105,6 +105,7 @@ All list APIs support **filtering**, **search**, and **ordering** where applicab
 | **Pillow** | Image handling (task/user images) |
 | **WhiteNoise** | Static file serving |
 | **django-unfold** | Modern admin UI |
+| **Django Control Room + panels** | Centralized admin/control plane with Redis, Cache, URLs, Celery panels for operations and debugging |
 | **Django Bolt** | Optional async API (v2) with OpenAPI |
 
 ### DevOps / Tooling
@@ -639,6 +640,7 @@ Then open **http://localhost:5173** and sign in or register.
 - **CORS**: Allowed origins are in `core/settings.py` (e.g. `http://localhost:5173`, `http://localhost:3000`). Adjust for your frontend URL.
 - **JWT**: Access token lifetime 60 minutes, refresh 1 day; configured in `SIMPLE_JWT` in `settings.py`.
 - **Static/Media**: Static files via WhiteNoise; media (uploads) at `MEDIA_URL`/`MEDIA_ROOT` (e.g. `/media/`, `backend/media/`).
+- **Admin & Ops Dashboard**: Unfold-themed Django admin plus Django Control Room (see `backend/README.md`) with Redis, Cache, URLs, and Celery panels at `/admin/dj-*-panel/` and the main dashboard at `/admin/dj-control-room/`.
 
 ### Frontend
 
