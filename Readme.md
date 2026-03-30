@@ -1,3 +1,5 @@
+[![CodeQL](https://github.com/Haroonhsa007/ToDo/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/Haroonhsa007/ToDo/actions/workflows/github-code-scanning/codeql)
+[![Dependabot Updates](https://github.com/Haroonhsa007/ToDo/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/Haroonhsa007/ToDo/actions/workflows/dependabot/dependabot-updates)
 # ToDo List Application
 
 A full-stack **task and todo management** application with a React (Vite) frontend and a Django REST backend. Users can register, log in, create tasks with priorities and categories, track progress, and manage their profile—all with JWT authentication and a modern, responsive UI.
